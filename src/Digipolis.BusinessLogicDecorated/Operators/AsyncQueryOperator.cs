@@ -9,7 +9,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     public class AsyncQueryOperator<TEntity, TInput> : IAsyncQueryOperator<TEntity, TInput>
         where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
     {
-        public virtual Task<IEnumerable<TEntity>> QueryAsync(TInput input = null)
+        public virtual Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput))
         {
             throw new NotImplementedException();
         }

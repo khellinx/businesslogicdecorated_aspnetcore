@@ -9,7 +9,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     public class AsyncGetOperator<TEntity, TInput> : IAsyncGetOperator<TEntity, TInput>
         where TInput : IHasIncludes<TEntity>
     {
-        public virtual Task<TEntity> GetAsync(int id, TInput input = null)
+        public virtual Task<TEntity> GetAsync(int id, TInput input = default(TInput))
         {
             throw new NotImplementedException();
         }

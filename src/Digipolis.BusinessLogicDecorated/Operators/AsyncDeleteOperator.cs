@@ -7,7 +7,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
 {
     public class AsyncDeleteOperator<TEntity, TInput> : IAsyncDeleteOperator<TEntity, TInput>
     {
-        public Task<TEntity> DeleteAsync(int id, TInput input = null)
+        public Task<TEntity> DeleteAsync(int id, TInput input = default(TInput))
         {
             throw new NotImplementedException();
         }
