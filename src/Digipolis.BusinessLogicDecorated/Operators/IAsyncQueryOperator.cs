@@ -12,8 +12,8 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     }
 
     public interface IAsyncQueryOperator<TEntity, TInput>
-        where TInput : class, IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
     {
-        Task<IEnumerable<TEntity>> QueryAsync(TInput input = null);
+        Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput));
     }
 }

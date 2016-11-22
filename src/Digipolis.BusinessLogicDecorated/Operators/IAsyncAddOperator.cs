@@ -10,8 +10,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     }
 
     public interface IAsyncAddOperator<TEntity, TInput>
-        where TInput : class
     {
-        Task<TEntity> AddAsync(TEntity entity, TInput input = null);
+        Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput));
     }
 }

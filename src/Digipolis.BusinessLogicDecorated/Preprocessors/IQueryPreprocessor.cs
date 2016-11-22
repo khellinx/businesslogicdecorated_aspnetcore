@@ -9,6 +9,6 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
     public interface IQueryPreprocessor<TEntity, TInput>
         where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
     {
-        void Preprocess(TInput input);
+        void Preprocess(TInput input = default(TInput));
     }
 }

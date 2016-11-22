@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Operators
 {
     public class AsyncQueryOperator<TEntity, TInput> : IAsyncQueryOperator<TEntity, TInput>
-        where TInput : class, IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
     {
         public virtual Task<IEnumerable<TEntity>> QueryAsync(TInput input = null)
         {

@@ -9,6 +9,6 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
     public interface IGetPreprocessor<TEntity, TInput>
         where TInput : IHasIncludes<TEntity>
     {
-        void Preprocess(TInput input);
+        void Preprocess(TInput input = default(TInput));
     }
 }

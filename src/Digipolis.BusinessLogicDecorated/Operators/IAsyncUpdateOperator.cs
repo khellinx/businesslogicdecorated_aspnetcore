@@ -10,8 +10,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     }
 
     public interface IAsyncUpdateOperator<TEntity, TInput>
-        where TInput : class
     {
-        Task<TEntity> UpdateAsync(TEntity entity, TInput input = null);
+        Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput));
     }
 }

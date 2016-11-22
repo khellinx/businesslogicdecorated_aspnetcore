@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Operators
 {
     public class AsyncGetOperator<TEntity, TInput> : IAsyncGetOperator<TEntity, TInput>
-        where TInput : class, IHasIncludes<TEntity>
+        where TInput : IHasIncludes<TEntity>
     {
         public virtual Task<TEntity> GetAsync(int id, TInput input = null)
         {
