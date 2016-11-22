@@ -22,7 +22,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         {
             Preprocessor.Preprocess(input);
 
-            return base.QueryAsync(input);
+            return QueryOperator.QueryAsync(input);
         }
     }
 }
