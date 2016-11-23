@@ -3,7 +3,7 @@
 	"description": "Add a business logic layer to your solution, decorated style so it's easy to extend and test!",
 	"authors": [ "Kelly Hellinx" ],
 	"packOptions": {
-        "tags": [ "Toolbox", "BusinessLogicDecorated" ],
+        "tags": [ "Toolbox", "Business", "Logic", "Decorator", "BusinessLogicDecorated" ],
         "repository": {
             "type": "git",
             "url": ""
@@ -11,9 +11,11 @@
         "projectUrl": "",
         "licenseUrl": ""
     },
-	"dependencies": {
-		"NETStandard.Library": "1.6.0"
-	},
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0"
+  },
 	"frameworks": {
         "netstandard1.6": {
             "imports": "dnxcore50"

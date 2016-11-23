@@ -1,4 +1,5 @@
-﻿using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
+﻿using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using Digipolis.BusinessLogicDecorated.Operators;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
     public abstract class AsyncGetDecorator<TEntity, TInput> : IAsyncGetOperator<TEntity, TInput>
-        where TInput : class, IHasIncludes<TEntity>
+        where TInput : IHasIncludes<TEntity>
     {
         public AsyncGetDecorator(IAsyncGetOperator<TEntity, TInput> getOperator)
         {
@@ -22,6 +23,6 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IAsyncGetOperator<TEntity, TInput> GetOperator { get; private set; }
 
-        public abstract Task<TEntity> GetAsync(int id, TInput input = null);
+        public abstract Task<TEntity> GetAsync(int id, TInput input = default(TInput));
     }
 }

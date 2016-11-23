@@ -1,4 +1,5 @@
-﻿using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
+﻿using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using Digipolis.BusinessLogicDecorated.Operators;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using System;
@@ -8,8 +9,15 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
+    public class AsyncQueryPreprocessingDecorator<TEntity> : AsyncQueryPreprocessingDecorator<TEntity, QueryInput<TEntity>>, IAsyncQueryOperator<TEntity>
+    {
+        public AsyncQueryPreprocessingDecorator(IAsyncQueryOperator<TEntity, QueryInput<TEntity>> queryOperator, IQueryPreprocessor<TEntity, QueryInput<TEntity>> preprocessor) : base(queryOperator, preprocessor)
+        {
+        }
+    }
+
     public class AsyncQueryPreprocessingDecorator<TEntity, TInput> : AsyncQueryDecorator<TEntity, TInput>
-        where TInput : class, IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
     {
         public AsyncQueryPreprocessingDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator, IQueryPreprocessor<TEntity, TInput> preprocessor) : base(queryOperator)
         {
@@ -18,7 +26,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IQueryPreprocessor<TEntity, TInput> Preprocessor { get; set; }
 
-        public override Task<IEnumerable<TEntity>> QueryAsync(TInput input = null)
+        public override Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput))
         {
             Preprocessor.Preprocess(input);
 

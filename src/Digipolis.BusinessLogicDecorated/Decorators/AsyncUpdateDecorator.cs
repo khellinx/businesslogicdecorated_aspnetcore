@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
     public abstract class AsyncUpdateDecorator<TEntity, TInput> : IAsyncUpdateOperator<TEntity, TInput>
-        where TInput : class
     {
         public AsyncUpdateDecorator(IAsyncUpdateOperator<TEntity, TInput> updateOperator)
         {
@@ -21,6 +20,6 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IAsyncUpdateOperator<TEntity, TInput> UpdateOperator { get; private set; }
 
-        public abstract Task<TEntity> UpdateAsync(TEntity entity, TInput input = null);
+        public abstract Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput));
     }
 }

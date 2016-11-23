@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
     public abstract class AsyncDeleteDecorator<TEntity, TInput> : IAsyncDeleteOperator<TEntity, TInput>
-        where TInput : class
     {
         public AsyncDeleteDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator)
         {
@@ -21,6 +20,6 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IAsyncDeleteOperator<TEntity, TInput> DeleteOperator { get; private set; }
 
-        public abstract Task<TEntity> DeleteAsync(int id, TInput input = null);
+        public abstract Task<TEntity> DeleteAsync(int id, TInput input = default(TInput));
     }
 }

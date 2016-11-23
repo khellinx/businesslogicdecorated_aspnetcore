@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
     public abstract class AsyncQueryDecorator<TEntity, TInput> : IAsyncQueryOperator<TEntity, TInput>
-        where TInput : class, IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
     {
         public AsyncQueryDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator)
         {
@@ -17,6 +17,6 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IAsyncQueryOperator<TEntity, TInput> QueryOperator { get; private set; }
 
-        public abstract Task<IEnumerable<TEntity>> QueryAsync(TInput input = null);
+        public abstract Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput));
     }
 }

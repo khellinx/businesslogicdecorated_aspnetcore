@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
+    public class AsyncUpdateValidationDecorator<TEntity> : AsyncUpdateValidationDecorator<TEntity, object>, IAsyncUpdateOperator<TEntity>
+    {
+        public AsyncUpdateValidationDecorator(IAsyncUpdateOperator<TEntity, object> updateOperator, IUpdateValidator<TEntity, object> validator) : base(updateOperator, validator)
+        {
+        }
+    }
+
     public class AsyncUpdateValidationDecorator<TEntity, TInput> : AsyncUpdateDecorator<TEntity, TInput>
-        where TInput : class
     {
         public AsyncUpdateValidationDecorator(IAsyncUpdateOperator<TEntity, TInput> updateOperator, IUpdateValidator<TEntity, TInput> validator) : base(updateOperator)
         {

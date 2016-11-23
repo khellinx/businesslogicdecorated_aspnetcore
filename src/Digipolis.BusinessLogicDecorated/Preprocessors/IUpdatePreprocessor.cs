@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Preprocessors
 {
-    public interface IAddPreprocessor<TEntity> : IAddPreprocessor<TEntity, object>
+    public interface IUpdatePreprocessor<TEntity> : IUpdatePreprocessor<TEntity, object>
     {
     }
 
-    public interface IAddPreprocessor<TEntity, TInput>
+    public interface IUpdatePreprocessor<TEntity, TInput>
     {
         void Preprocess(ref TEntity entity, TInput input = default(TInput));
     }

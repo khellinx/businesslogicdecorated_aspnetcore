@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Validators
 {
+    public interface IDeleteValidator<TEntity> : IDeleteValidator<TEntity, object>
+    {
+    }
+
     public interface IDeleteValidator<TEntity, TInput>
     {
         void Validate(int id, TInput input = default(TInput));

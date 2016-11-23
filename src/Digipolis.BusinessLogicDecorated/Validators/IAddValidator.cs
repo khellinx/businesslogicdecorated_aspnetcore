@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Validators
 {
+    public interface IAddValidator<TEntity> : IAddValidator<TEntity, object>
+    {
+    }
+
     public interface IAddValidator<TEntity, TInput>
     {
         void Validate(TEntity entity, TInput input = default(TInput));

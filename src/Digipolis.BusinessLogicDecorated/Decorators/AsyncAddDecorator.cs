@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
     public abstract class AsyncAddDecorator<TEntity, TInput> : IAsyncAddOperator<TEntity, TInput>
-        where TInput : class
     {
         public AsyncAddDecorator(IAsyncAddOperator<TEntity, TInput> addOperator)
         {
@@ -21,6 +20,6 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IAsyncAddOperator<TEntity, TInput> AddOperator { get; private set; }
 
-        public abstract Task<TEntity> AddAsync(TEntity entity, TInput input = null);
+        public abstract Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput));
     }
 }

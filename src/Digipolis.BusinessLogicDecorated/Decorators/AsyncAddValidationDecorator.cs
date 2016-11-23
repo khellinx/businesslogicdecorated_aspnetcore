@@ -7,8 +7,14 @@ using Digipolis.BusinessLogicDecorated.Validators;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
+    public class AsyncAddValidationDecorator<TEntity> : AsyncAddValidationDecorator<TEntity, object>, IAsyncAddOperator<TEntity>
+    {
+        public AsyncAddValidationDecorator(IAsyncAddOperator<TEntity, object> addOperator, IAddValidator<TEntity, object> validator) : base(addOperator, validator)
+        {
+        }
+    }
+
     public class AsyncAddValidationDecorator<TEntity, TInput> : AsyncAddDecorator<TEntity, TInput>
-        where TInput : class
     {
         public AsyncAddValidationDecorator(IAsyncAddOperator<TEntity, TInput> addOperator, IAddValidator<TEntity, TInput> validator) : base(addOperator)
         {
@@ -22,7 +28,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IAddValidator<TEntity, TInput> Validator { get; private set; }
 
-        public override Task<TEntity> AddAsync(TEntity entity, TInput input = null)
+        public override Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
         {
             Validator.Validate(entity, input);
 
