@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
+using System.Diagnostics;
+using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
 
 namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
 {
@@ -18,9 +22,18 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id, [FromQuery]string fields)
+        public async Task<IActionResult> Get(int id, [FromQuery]string fields, [FromServices] IAsyncGetOperator<Person, GetPersonInput> op)
         {
-            return "value";
+            try
+            {
+                var result = await op.GetAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                throw;
+            }
         }
 
         // POST api/values

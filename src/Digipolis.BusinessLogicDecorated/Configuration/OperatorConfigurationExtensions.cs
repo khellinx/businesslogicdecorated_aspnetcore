@@ -56,6 +56,13 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return configuration;
         }
 
+        public static IOperatorConfiguration<IAsyncGetOperator<TEntity, TInput>> WithPreprocessing<TEntity, TInput, TPreprocessor>(this IOperatorConfiguration<IAsyncGetOperator<TEntity, TInput>> configuration)
+            where TInput : IHasIncludes<TEntity>
+            where TPreprocessor : class, IGetPreprocessor<TEntity, TInput>
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region QueryOperator

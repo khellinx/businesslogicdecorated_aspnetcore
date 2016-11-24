@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Configuration
 {
+    public interface IOperatorConfiguration
+    {
+    }
+
     public interface IOperatorConfiguration<TOperator>
     {
         Func<IServiceProvider, TOperator> OperatorFactory { get; }
