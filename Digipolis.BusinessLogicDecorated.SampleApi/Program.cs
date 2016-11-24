@@ -16,7 +16,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
-                .UseStartup<Startup>()
+                .UseStartup<Startup.Startup>()
                 .Build();
 
             host.Run();

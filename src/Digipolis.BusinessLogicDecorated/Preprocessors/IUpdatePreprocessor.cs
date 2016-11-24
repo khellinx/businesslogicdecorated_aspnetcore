@@ -11,6 +11,6 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
 
     public interface IUpdatePreprocessor<TEntity, TInput>
     {
-        void Preprocess(ref TEntity entity, TInput input = default(TInput));
+        void PreprocessForUpdate(ref TEntity entity, ref TInput input);
     }
 }

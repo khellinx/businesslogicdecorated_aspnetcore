@@ -28,9 +28,9 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IDeleteValidator<TEntity, TInput> Validator { get; private set; }
 
-        public override Task<TEntity> DeleteAsync(int id, TInput input = default(TInput))
+        public override Task DeleteAsync(int id, TInput input = default(TInput))
         {
-            Validator.Validate(id, input);
+            Validator.ValidateForDelete(id, input);
 
             return DeleteOperator.DeleteAsync(id, input);
         }

@@ -30,7 +30,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public override Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
         {
-            Validator.Validate(entity, input);
+            Validator.ValidateForAdd(entity, input);
 
             return AddOperator.AddAsync(entity, input);
         }

@@ -15,8 +15,11 @@ using Digipolis.BusinessLogicDecorated.Configuration;
 using Digipolis.BusinessLogicDecorated.Operators;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
+using Digipolis.BusinessLogicDecorated.Configuration.Extensions;
+using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Preprocessors;
+using Digipolis.BusinessLogicDecorated.SampleApi.Startup;
 
-namespace Digipolis.BusinessLogicDecorated.SampleApi
+namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
 {
     public class Startup
     {
@@ -45,17 +48,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi
             services.AddDbContext<EntityContext>(builder => builder.UseInMemoryDatabase("BusinessLogicDecorated"));
 
             // Add the business logic
-            //OperatorBuilder.ConfigureAsyncGetOperator<Person, GetPersonInput, IAsyncGetOperator<Person, GetPersonInput>>(x => new AsyncAddOperator<Person, GetPersonInput>(x.GetRequiredService<IUowProvider>()))
-            //    .AddTransient(services);
-            //operationBuilder.ConfigureAsyncGetOperator<Person, GetPersonInput>(x => new AsyncAddOperator<Person, GetPersonInput>(x.GetRequiredService<IUowProvider>()))
-            //    .AddTransient(services);
-
-            var operatorBuilder = new OperatorBuilder();
-            operatorBuilder.SetDefaultAsyncGetOperatorTypes(typeof(AsyncGetOperator<>), typeof(AsyncGetOperator<,>));
-
-            operatorBuilder.ConfigureAsyncGetOperator<Person, GetPersonInput>()
-                .WithPreprocessing()
-                .AddTransient(services);
+            services.AddBusinessLogic();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

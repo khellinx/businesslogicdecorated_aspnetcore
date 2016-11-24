@@ -20,6 +20,6 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IAsyncDeleteOperator<TEntity, TInput> DeleteOperator { get; private set; }
 
-        public abstract Task<TEntity> DeleteAsync(int id, TInput input = default(TInput));
+        public abstract Task DeleteAsync(int id, TInput input = default(TInput));
     }
 }

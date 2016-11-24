@@ -23,9 +23,9 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public IDeletePreprocessor<TEntity, TInput> Preprocessor { get; set; }
 
-        public override Task<TEntity> DeleteAsync(int id, TInput input = default(TInput))
+        public override Task DeleteAsync(int id, TInput input = default(TInput))
         {
-            Preprocessor.Preprocess(id, input);
+            Preprocessor.PreprocessForDelete(id, ref input);
 
             return DeleteOperator.DeleteAsync(id, input);
         }

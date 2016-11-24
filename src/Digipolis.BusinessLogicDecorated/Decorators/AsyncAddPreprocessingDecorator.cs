@@ -25,7 +25,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public override Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
         {
-            Preprocessor.Preprocess(ref entity, input);
+            Preprocessor.PreprocessForAdd(ref entity, ref input);
 
             return AddOperator.AddAsync(entity, input);
         }

@@ -11,6 +11,6 @@ namespace Digipolis.BusinessLogicDecorated.Validators
 
     public interface IAddValidator<TEntity, TInput>
     {
-        void Validate(TEntity entity, TInput input = default(TInput));
+        void ValidateForAdd(TEntity entity, TInput input = default(TInput));
     }
 }

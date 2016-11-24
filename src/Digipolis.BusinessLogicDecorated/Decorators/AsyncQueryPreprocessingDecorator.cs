@@ -28,7 +28,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public override Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput))
         {
-            Preprocessor.Preprocess(input);
+            Preprocessor.PreprocessForQuery(ref input);
 
             return QueryOperator.QueryAsync(input);
         }

@@ -13,16 +13,25 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
     [Route("api/[controller]")]
     public class PeopleController : Controller
     {
-        // GET api/values
+        // GET api/people
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get([FromServices] IAsyncQueryOperator<Person> op)
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                var result = await op.QueryAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                throw;
+            }
         }
 
-        // GET api/values/5
+        // GET api/people/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id, [FromQuery]string fields, [FromServices] IAsyncGetOperator<Person, GetPersonInput> op)
+        public async Task<IActionResult> Get([FromServices] IAsyncGetOperator<Person, GetPersonInput> op, int id, [FromQuery]string fields)
         {
             try
             {
@@ -36,19 +45,20 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
             }
         }
 
-        // POST api/values
+        // POST api/people
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromServices] IAsyncAddOperator<Person> op, [FromBody]string value)
         {
+
         }
 
-        // PUT api/values/5
+        // PUT api/people/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE api/values/5
+        // DELETE api/people/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

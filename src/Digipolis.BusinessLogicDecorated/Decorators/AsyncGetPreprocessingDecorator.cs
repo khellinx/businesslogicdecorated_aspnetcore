@@ -28,9 +28,9 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
 
         public override Task<TEntity> GetAsync(int id, TInput input = default(TInput))
         {
-            Preprocessor.Preprocess(input);
+            Preprocessor.PreprocessForGet(ref input);
 
-            return GetOperator.GetAsync(id);
+            return GetOperator.GetAsync(id, input);
         }
     }
 }
