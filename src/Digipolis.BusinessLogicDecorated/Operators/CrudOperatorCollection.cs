@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,16 @@ namespace Digipolis.BusinessLogicDecorated.Operators
             }
 
             return AsyncQueryOperator.QueryAsync(input);
+        }
+
+        public Task<PagedCollection<TEntity>> QueryAsync(Page page, TQueryInput input = default(TQueryInput))
+        {
+            if (AsyncQueryOperator == null)
+            {
+                throw new InvalidOperationException($"There is no Query operator specified for entity '{typeof(TEntity).Name}'.");
+            }
+
+            return AsyncQueryOperator.QueryAsync(page, input);
         }
 
         public Task<TEntity> AddAsync(TEntity entity)

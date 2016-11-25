@@ -1,5 +1,6 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Paging;
 using Digipolis.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,29 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
             {
                 var repository = uow.GetRepository<TEntity>();
                 return await repository.QueryAsync(input?.Filter, input?.Order, input?.Includes);
+            }
+        }
+
+        public virtual async Task<PagedCollection<TEntity>> QueryAsync(Page page, TInput input = default(TInput))
+        {
+            if (page == null)
+            {
+                throw new ArgumentNullException(nameof(page));
+            }
+
+            using (var uow = _uowProvider.CreateUnitOfWork(false))
+            {
+                var repository = uow.GetRepository<TEntity>();
+                var startRow = (page.Number - 1) * page.Size;
+
+                var result = new PagedCollection<TEntity>()
+                {
+                    Page = page,
+                    Data = await repository.QueryPageAsync(startRow, page.Size, input?.Filter, input?.Order, input?.Includes),
+                    TotalCount = await repository.CountAsync(input?.Filter)
+                };
+
+                return result;
             }
         }
     }

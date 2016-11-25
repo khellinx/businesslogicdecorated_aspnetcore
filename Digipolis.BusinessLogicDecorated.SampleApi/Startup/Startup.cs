@@ -82,18 +82,37 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
                 Name = "Peter",
                 Birthdate = new DateTime(1953, 1, 9)
             };
+            var chris = new Person()
+            {
+                Name = "Chris",
+                Birthdate = new DateTime(1971, 3, 27)
+            };
+            var ella = new Person()
+            {
+                Name = "Ella",
+                Birthdate = new DateTime(1990, 11, 30)
+            };
 
             context.People.Add(john);
             context.People.Add(maria);
             context.People.Add(peter);
+            context.People.Add(chris);
+            context.People.Add(ella);
 
-            var home = new Home()
+            var digipolis = new Home()
             {
                 Address = "Generaal Armstrongweg 1, 2020 Antwerpen",
                 NumberOfRooms = 10
             };
 
-            context.Homes.Add(home);
+            var stadhuis = new Home()
+            {
+                Address = "Grote Markt 1, 20à0 Antwerpen",
+                NumberOfRooms = 16
+            };
+
+            context.Homes.Add(digipolis);
+            context.Homes.Add(stadhuis);
 
             context.SaveChanges();
         }

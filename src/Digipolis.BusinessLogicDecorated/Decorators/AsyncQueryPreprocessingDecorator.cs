@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Digipolis.BusinessLogicDecorated.Paging;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
@@ -30,6 +31,13 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Preprocessor.PreprocessForQuery(ref input);
 
             return QueryOperator.QueryAsync(input);
+        }
+
+        public override Task<PagedCollection<TEntity>> QueryAsync(Page page, TInput input = null)
+        {
+            Preprocessor.PreprocessForQuery(ref page, ref input);
+
+            return QueryOperator.QueryAsync(page, input);
         }
     }
 }

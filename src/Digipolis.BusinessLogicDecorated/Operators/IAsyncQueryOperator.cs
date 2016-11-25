@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace Digipolis.BusinessLogicDecorated.Operators
         where TInput : QueryInput<TEntity>
     {
         Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput));
+        Task<PagedCollection<TEntity>> QueryAsync(Page page, TInput input = default(TInput));
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.Paging;
 
 namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Preprocessors
 {
@@ -17,6 +18,11 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Preprocessors
             if (input == null) input = new QueryInput<Person>();
 
             input.Order = person => person.OrderByDescending(x => x.Name);
+        }
+
+        public void PreprocessForQuery(ref Page page, ref QueryInput<Person> input)
+        {
+            PreprocessForQuery(ref input);
         }
 
         public void PreprocessForGet(ref GetPersonInput input)

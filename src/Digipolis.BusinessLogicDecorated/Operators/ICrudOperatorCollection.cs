@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
 
         Task<TEntity> GetAsync(int id, TGetInput input = default(TGetInput));
         Task<IEnumerable<TEntity>> QueryAsync(TQueryInput input = default(TQueryInput));
+        Task<PagedCollection<TEntity>> QueryAsync(Page page, TQueryInput input = default(TQueryInput));
         Task<TEntity> AddAsync(TEntity entity);
         Task<TEntity> UpdateAsync(TEntity entity);
         Task DeleteAsync(int id);

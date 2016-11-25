@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Paging;
 using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,15 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
     {
         // GET api/people
         [HttpGet]
-        public async Task<IActionResult> Get([FromServices] IAsyncQueryOperator<Person> op)
+        public async Task<IActionResult> Get([FromServices] IAsyncQueryOperator<Person> op, [FromQuery]Page page)
         {
             try
             {
-                var result = await op.QueryAsync();
+                if (page == null) page = new Page();
+                if (page.Number <= 0) page.Number = 1;
+                if (page.Size <= 0) page.Size = 2;
+
+                var result = await op.QueryAsync(page);
                 return Ok(result);
             }
             catch (Exception ex)
