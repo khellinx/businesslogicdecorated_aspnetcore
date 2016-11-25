@@ -10,6 +10,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 {
     public interface IAsyncDeleteOperatorConfiguration<TEntity> : IOperatorConfiguration<IAsyncDeleteOperator<TEntity>>
     {
+        IAsyncDeleteOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity>> operatorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncDeleteOperator<TEntity>;
+
         IAsyncDeleteOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IDeletePreprocessor<TEntity>> preprocessorFactory = null);
         IAsyncDeleteOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IDeletePreprocessor<TEntity>;
@@ -21,6 +25,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
     public interface IAsyncDeleteOperatorConfiguration<TEntity, TInput> : IOperatorConfiguration<IAsyncDeleteOperator<TEntity, TInput>>
     {
+        IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> preprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncDeleteOperator<TEntity, TInput>;
+
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IDeletePreprocessor<TEntity, TInput>> preprocessorFactory = null);
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IDeletePreprocessor<TEntity, TInput>;

@@ -16,6 +16,29 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
+        public IAsyncDeleteOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity>> operatorFactory = null)
+        {
+            if (operatorFactory == null)
+            {
+                throw new ArgumentNullException(nameof(operatorFactory));
+            }
+
+            OperatorFactory = operatorFactory;
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncDeleteOperator<TEntity>
+        {
+            OperatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
+            };
+
+            return this;
+        }
+
         public IAsyncDeleteOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IDeletePreprocessor<TEntity>> preprocessorFactory = null)
         {
             if (preprocessorFactory == null)
@@ -71,6 +94,29 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
     {
         public AsyncDeleteOperatorConfiguration(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> operatorFactory) : base(typeof(TEntity), operatorFactory)
         {
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> operatorFactory = null)
+        {
+            if (operatorFactory == null)
+            {
+                throw new ArgumentNullException(nameof(operatorFactory));
+            }
+
+            OperatorFactory = operatorFactory;
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncDeleteOperator<TEntity, TInput>
+        {
+            OperatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
+            };
+
+            return this;
         }
 
         public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IDeletePreprocessor<TEntity, TInput>> preprocessorFactory = null)

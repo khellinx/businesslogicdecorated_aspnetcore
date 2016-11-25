@@ -10,6 +10,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 {
     public interface IAsyncAddOperatorConfiguration<TEntity> : IOperatorConfiguration<IAsyncAddOperator<TEntity>>
     {
+        IAsyncAddOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity>> operatorFactory = null);
+        IAsyncAddOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncAddOperator<TEntity>;
+
         IAsyncAddOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IAddPreprocessor<TEntity>> preprocessorFactory = null);
         IAsyncAddOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IAddPreprocessor<TEntity>;
@@ -21,6 +25,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
     public interface IAsyncAddOperatorConfiguration<TEntity, TInput> : IOperatorConfiguration<IAsyncAddOperator<TEntity, TInput>>
     {
+        IAsyncAddOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> preprocessorFactory = null);
+        IAsyncAddOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncAddOperator<TEntity, TInput>;
+
         IAsyncAddOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IAddPreprocessor<TEntity, TInput>> preprocessorFactory = null);
         IAsyncAddOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IAddPreprocessor<TEntity, TInput>;

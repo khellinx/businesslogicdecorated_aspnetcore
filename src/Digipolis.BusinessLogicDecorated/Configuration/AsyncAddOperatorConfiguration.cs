@@ -16,6 +16,29 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
+        public IAsyncAddOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity>> operatorFactory = null)
+        {
+            if (operatorFactory == null)
+            {
+                throw new ArgumentNullException(nameof(operatorFactory));
+            }
+
+            OperatorFactory = operatorFactory;
+
+            return this;
+        }
+
+        public IAsyncAddOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncAddOperator<TEntity>
+        {
+            OperatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
+            };
+
+            return this;
+        }
+
         public IAsyncAddOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IAddPreprocessor<TEntity>> preprocessorFactory = null)
         {
             if (preprocessorFactory == null)
@@ -71,6 +94,29 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
     {
         public AsyncAddOperatorConfiguration(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory) : base(typeof(TEntity), operatorFactory)
         {
+        }
+
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory = null)
+        {
+            if (operatorFactory == null)
+            {
+                throw new ArgumentNullException(nameof(operatorFactory));
+            }
+
+            OperatorFactory = operatorFactory;
+
+            return this;
+        }
+
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncAddOperator<TEntity, TInput>
+        {
+            OperatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
+            };
+
+            return this;
         }
 
         public IAsyncAddOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IAddPreprocessor<TEntity, TInput>> preprocessorFactory = null)

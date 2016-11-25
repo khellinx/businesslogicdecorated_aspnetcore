@@ -22,7 +22,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
         public Type EntityType { get; }
         public Type OperatorType { get; }
-        public Func<IServiceProvider, TOperator> OperatorFactory { get; }
+        public Func<IServiceProvider, TOperator> OperatorFactory { get; protected set; }
         public IList<Func<TOperator, IServiceProvider, TOperator>> Decorators { get; }
 
         public virtual TOperator Build(IServiceProvider serviceProvider)
