@@ -18,6 +18,14 @@ Use at your own risk.
 
 Testing and documentation is absent/minimal but will be expanded in the future.
 
+## TO DO
+
+- Testing
+- Documentation
+- Playing with covariant (out) and contravariant (in) generic modifiers to see if code can be re-used instead of repeated in places where TGetInput and TQueryInput are used.
+- Add Postprocessing operator
+- Add operator with generic output
+
 ## Installation
 
 To add the toolbox to a project, you add the package to the project.json :
