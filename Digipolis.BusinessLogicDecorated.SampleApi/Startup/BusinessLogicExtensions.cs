@@ -27,7 +27,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
             operatorBuilder.SetDefaultAsyncDeleteOperatorTypes(typeof(AsyncDeleteOperator<>), typeof(AsyncDeleteOperator<,>));
 
             // Configure operators in one time for the Home entity
-            operatorBuilder.ConfigureAsyncCrudOperators<Home, GetInput<Home>, QueryInput<Home>>()
+            operatorBuilder.ConfigureAsyncCrudOperators<Home>()
                 .WithValidation<HomeValidator>();
 
             // Configure operators and their decorators separately for Person entity

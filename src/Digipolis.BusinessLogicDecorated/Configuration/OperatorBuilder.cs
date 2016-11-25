@@ -83,6 +83,11 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             }
         }
 
+        public ICrudOperatorConfigurationCollection<TEntity, GetInput<TEntity>, QueryInput<TEntity>> ConfigureAsyncCrudOperators<TEntity>()
+        {
+            return ConfigureAsyncCrudOperators<TEntity, GetInput<TEntity>, QueryInput<TEntity>>();
+        }
+
         public ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> ConfigureAsyncCrudOperators<TEntity, TGetInput, TQueryInput>()
             where TGetInput : GetInput<TEntity>
             where TQueryInput : QueryInput<TEntity>
