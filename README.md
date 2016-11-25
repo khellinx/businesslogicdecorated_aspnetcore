@@ -11,13 +11,20 @@ Add a business logic layer to your solution, decorated style so it's easy to ext
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## DISCLAIMER
+
+This is still a beta package and is currently being developed.
+Use at your own risk.
+
+Testing and documentation is absent/minimal but will be expanded in the future.
+
 ## Installation
 
 To add the toolbox to a project, you add the package to the project.json :
 
 ``` json 
 "dependencies": {
-    "Digipolis.BusinessLogicDecorated":  "1.0.0"
+    "Digipolis.BusinessLogicDecorated":  "0.1.0"
  }
 ``` 
 
