@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.DataAccess;
-using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 
 namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
 {
@@ -17,7 +16,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
     }
 
     public class AsyncGetOperator<TEntity, TInput> : IAsyncGetOperator<TEntity, TInput>
-        where TInput : IHasIncludes<TEntity>
+        where TInput : GetInput<TEntity>
     {
         private IUowProvider _uowProvider;
 

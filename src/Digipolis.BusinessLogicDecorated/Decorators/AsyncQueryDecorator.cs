@@ -1,4 +1,4 @@
-﻿using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
+﻿using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.Operators;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
     public abstract class AsyncQueryDecorator<TEntity, TInput> : IAsyncQueryOperator<TEntity, TInput>
-        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : QueryInput<TEntity>
     {
         public AsyncQueryDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator)
         {

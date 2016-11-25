@@ -1,5 +1,4 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
-using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using Digipolis.BusinessLogicDecorated.Operators;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using System;
@@ -17,7 +16,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     }
 
     public class AsyncQueryPreprocessingDecorator<TEntity, TInput> : AsyncQueryDecorator<TEntity, TInput>
-        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : QueryInput<TEntity>
     {
         public AsyncQueryPreprocessingDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator, IQueryPreprocessor<TEntity, TInput> preprocessor) : base(queryOperator)
         {

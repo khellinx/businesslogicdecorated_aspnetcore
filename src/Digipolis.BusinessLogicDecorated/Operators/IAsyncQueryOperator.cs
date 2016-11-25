@@ -1,5 +1,4 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
-using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     }
 
     public interface IAsyncQueryOperator<TEntity, TInput>
-        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : QueryInput<TEntity>
     {
         Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput));
     }

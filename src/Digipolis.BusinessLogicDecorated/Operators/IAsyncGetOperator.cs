@@ -1,5 +1,4 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
-using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     }
 
     public interface IAsyncGetOperator<TEntity, TInput>
-        where TInput : IHasIncludes<TEntity>
+        where TInput : GetInput<TEntity>
     {
         Task<TEntity> GetAsync(int id, TInput input = default(TInput));
     }

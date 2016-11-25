@@ -11,13 +11,6 @@ using Digipolis.DataAccess;
 using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
-using Digipolis.BusinessLogicDecorated.Configuration;
-using Digipolis.BusinessLogicDecorated.Operators;
-using Digipolis.BusinessLogicDecorated.SampleApi.Logic;
-using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
-using Digipolis.BusinessLogicDecorated.Configuration.Extensions;
-using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Preprocessors;
-using Digipolis.BusinessLogicDecorated.SampleApi.Startup;
 
 namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
 {
@@ -93,6 +86,14 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
             context.People.Add(john);
             context.People.Add(maria);
             context.People.Add(peter);
+
+            var home = new Home()
+            {
+                Address = "Generaal Armstrongweg 1, 2020 Antwerpen",
+                NumberOfRooms = 10
+            };
+
+            context.Homes.Add(home);
 
             context.SaveChanges();
         }

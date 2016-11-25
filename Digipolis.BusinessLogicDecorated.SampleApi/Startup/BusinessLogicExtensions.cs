@@ -1,5 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Configuration;
-using Digipolis.BusinessLogicDecorated.Configuration.Extensions;
+using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
@@ -19,22 +19,28 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
         {
             var operatorBuilder = new OperatorBuilder();
 
-            // Set the default operator implementations
+            // Set the default operator implementations. This should be done first.
             operatorBuilder.SetDefaultAsyncGetOperatorTypes(typeof(AsyncGetOperator<>), typeof(AsyncGetOperator<,>));
             operatorBuilder.SetDefaultAsyncQueryOperatorTypes(typeof(AsyncQueryOperator<>), typeof(AsyncQueryOperator<,>));
             operatorBuilder.SetDefaultAsyncAddOperatorTypes(typeof(AsyncAddOperator<>), typeof(AsyncAddOperator<,>));
             operatorBuilder.SetDefaultAsyncUpdateOperatorTypes(typeof(AsyncUpdateOperator<>), typeof(AsyncUpdateOperator<,>));
             operatorBuilder.SetDefaultAsyncDeleteOperatorTypes(typeof(AsyncDeleteOperator<>), typeof(AsyncDeleteOperator<,>));
 
-            // Configure specific operators and their decorators
+            // Configure operators in one time for the Home entity
+            operatorBuilder.ConfigureAsyncCrudOperators<Home, GetInput<Home>, QueryInput<Home>>()
+                .WithValidation<HomeValidator>();
+
+            // Configure operators and their decorators separately for Person entity
             operatorBuilder.ConfigureAsyncGetOperator<Person, GetPersonInput>()
-                .WithPreprocessing<Person, GetPersonInput, PersonPreprocessor>();
+                .WithPreprocessing<PersonPreprocessor>();
             operatorBuilder.ConfigureAsyncQueryOperator<Person>()
-                .WithPreprocessing<Person, PersonPreprocessor>();
+                .WithPreprocessing<PersonPreprocessor>();
             operatorBuilder.ConfigureAsyncAddOperator<Person>()
-                .WithValidation<Person, PersonValidator>();
-            operatorBuilder.ConfigureAsyncAddOperator<Person>()
-                .WithValidation<Person, PersonValidator>();
+                .WithValidation<PersonValidator>();
+            operatorBuilder.ConfigureAsyncUpdateOperator<Person>()
+                .WithValidation<PersonValidator>();
+            operatorBuilder.ConfigureAsyncDeleteOperator<Person>()
+                .WithValidation<PersonValidator>();
 
             // Add all configured operators to the servicecollection
             operatorBuilder.AddOperators(services);

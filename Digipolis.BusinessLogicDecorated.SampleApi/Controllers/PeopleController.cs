@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
+using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Digipolis.BusinessLogicDecorated.Operators;
-using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
-using System.Diagnostics;
-using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
 
 namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
 {

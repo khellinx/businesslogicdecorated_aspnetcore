@@ -16,6 +16,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.DataAccess
         }
 
         public DbSet<Person> People { get; set; }
+        public DbSet<Home> Homes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

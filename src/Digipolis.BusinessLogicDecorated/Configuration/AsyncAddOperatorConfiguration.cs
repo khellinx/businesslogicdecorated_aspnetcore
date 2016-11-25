@@ -10,20 +10,70 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Configuration
 {
-    public class AsyncAddOperatorConfiguration<TEntity> : AsyncAddOperatorConfiguration<TEntity, object>
+    public class AsyncAddOperatorConfiguration<TEntity> : OperatorConfiguration<IAsyncAddOperator<TEntity>>, IAsyncAddOperatorConfiguration<TEntity>
     {
-        public AsyncAddOperatorConfiguration(Func<IServiceProvider, IAsyncAddOperator<TEntity, object>> operatorFactory) : base(operatorFactory)
+        public AsyncAddOperatorConfiguration(Func<IServiceProvider, IAsyncAddOperator<TEntity>> operatorFactory) : base(typeof(TEntity), operatorFactory)
         {
+        }
+
+        public IAsyncAddOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IAddPreprocessor<TEntity>> preprocessorFactory = null)
+        {
+            if (preprocessorFactory == null)
+            {
+                preprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IAddPreprocessor<TEntity>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncAddPreprocessingDecorator<TEntity>(op, preprocessorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncAddOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IAddPreprocessor<TEntity>
+        {
+            Func<IServiceProvider, IAddPreprocessor<TEntity>> preprocessorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TPreprocessor>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncAddPreprocessingDecorator<TEntity>(op, preprocessorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncAddOperatorConfiguration<TEntity> WithValidation(Func<IServiceProvider, IAddValidator<TEntity>> validatorFactory = null)
+        {
+            if (validatorFactory == null)
+            {
+                validatorFactory = serviceProvider => serviceProvider.GetRequiredService<IAddValidator<TEntity>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncAddValidationDecorator<TEntity>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncAddOperatorConfiguration<TEntity> WithValidation<TValidator>()
+            where TValidator : class, IAddValidator<TEntity>
+        {
+            Func<IServiceProvider, IAddValidator<TEntity>> validatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TValidator>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncAddValidationDecorator<TEntity>(op, validatorFactory(serviceProvider)));
+
+            return this;
         }
     }
 
     public class AsyncAddOperatorConfiguration<TEntity, TInput> : OperatorConfiguration<IAsyncAddOperator<TEntity, TInput>>, IAsyncAddOperatorConfiguration<TEntity, TInput>
     {
-        public AsyncAddOperatorConfiguration(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory) : base(operatorFactory)
+        public AsyncAddOperatorConfiguration(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory) : base(typeof(TEntity), operatorFactory)
         {
         }
 
-        public IOperatorConfiguration<IAsyncAddOperator<TEntity, TInput>> WithPreprocessing(Func<IServiceProvider, IAddPreprocessor<TEntity, TInput>> preprocessorFactory = null)
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IAddPreprocessor<TEntity, TInput>> preprocessorFactory = null)
         {
             if (preprocessorFactory == null)
             {
@@ -35,7 +85,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return this;
         }
 
-        public IOperatorConfiguration<IAsyncAddOperator<TEntity, TInput>> WithPreprocessing<TPreprocessor>()
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IAddPreprocessor<TEntity, TInput>
         {
             Func<IServiceProvider, IAddPreprocessor<TEntity, TInput>> preprocessorFactory = serviceProvider =>
@@ -48,7 +98,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return this;
         }
 
-        public IOperatorConfiguration<IAsyncAddOperator<TEntity, TInput>> WithValidation(Func<IServiceProvider, IAddValidator<TEntity, TInput>> validatorFactory = null)
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithValidation(Func<IServiceProvider, IAddValidator<TEntity, TInput>> validatorFactory = null)
         {
             if (validatorFactory == null)
             {
@@ -60,7 +110,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return this;
         }
 
-        public IOperatorConfiguration<IAsyncAddOperator<TEntity, TInput>> WithValidation<TValidator>()
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithValidation<TValidator>()
             where TValidator : class, IAddValidator<TEntity, TInput>
         {
             Func<IServiceProvider, IAddValidator<TEntity, TInput>> validatorFactory = serviceProvider =>

@@ -1,5 +1,4 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
-using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using Digipolis.BusinessLogicDecorated.Operators;
 using Digipolis.DataAccess;
 using System;
@@ -17,7 +16,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
     }
 
     public class AsyncQueryOperator<TEntity, TInput> : IAsyncQueryOperator<TEntity, TInput>
-        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : QueryInput<TEntity>
     {
         private IUowProvider _uowProvider;
 

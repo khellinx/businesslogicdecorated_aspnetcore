@@ -1,6 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Extensions;
 using Digipolis.BusinessLogicDecorated.Inputs;
-using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using Digipolis.BusinessLogicDecorated.Operators;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -25,10 +24,16 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         private Type _defaultAsyncDeleteOperatorTypeWithCustomInput;
 
         private IList<IOperatorConfiguration> _configurations;
+        private IList<ServiceDescriptor> _operatorServiceDescriptors;
+        private IList<ServiceDescriptor> _crudOperatorCollectionServiceDescriptors;
+        private ServiceLifetime _serviceLifetime;
 
-        public OperatorBuilder()
+        public OperatorBuilder(ServiceLifetime lifetime = ServiceLifetime.Transient)
         {
             _configurations = new List<IOperatorConfiguration>();
+            _operatorServiceDescriptors = new List<ServiceDescriptor>();
+            _crudOperatorCollectionServiceDescriptors = new List<ServiceDescriptor>();
+            _serviceLifetime = lifetime;
         }
 
         public void SetDefaultAsyncGetOperatorTypes(Type asyncGetOperatorType = null, Type asyncGetOperatorTypeWithCustomInput = null)
@@ -78,28 +83,17 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             }
         }
 
-        public IOperatorConfigurationCrudCollection<TEntity, QueryInput<TEntity>, GetInput<TEntity>> ConfigureAsyncCrudOperators<TEntity>()
+        public ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> ConfigureAsyncCrudOperators<TEntity, TGetInput, TQueryInput>()
+            where TGetInput : GetInput<TEntity>
+            where TQueryInput : QueryInput<TEntity>
         {
-            return ConfigureAsyncCrudOperators<TEntity, QueryInput<TEntity>, GetInput<TEntity>>();
-        }
-
-        public IOperatorConfigurationCrudCollection<TEntity, TQueryInput, GetInput<TEntity>> ConfigureAsyncCrudOperators<TEntity, TQueryInput>()
-            where TQueryInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
-        {
-            return ConfigureAsyncCrudOperators<TEntity, TQueryInput, GetInput<TEntity>>();
-        }
-
-        public IOperatorConfigurationCrudCollection<TEntity, TQueryInput, TGetInput> ConfigureAsyncCrudOperators<TEntity, TQueryInput, TGetInput>()
-            where TGetInput : IHasIncludes<TEntity>
-            where TQueryInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
-        {
-            if (_defaultAsyncGetOperatorType == null)
+            if (_defaultAsyncGetOperatorTypeWithCustomInput == null)
             {
-                throw new InvalidOperationException("There is no default Get operator implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
+                throw new InvalidOperationException("There is no default Get operator with custom input implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
             }
-            if (_defaultAsyncQueryOperatorType == null)
+            if (_defaultAsyncQueryOperatorTypeWithCustomInput == null)
             {
-                throw new InvalidOperationException("There is no default Query operator implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
+                throw new InvalidOperationException("There is no default Query operator with custom input implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
             }
             if (_defaultAsyncAddOperatorType == null)
             {
@@ -114,70 +108,142 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 throw new InvalidOperationException("There is no default Delete operator implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
             }
 
-            var getOperatorConfig = CreateConfiguration<TEntity, IAsyncGetOperator<TEntity, TGetInput>>(null, _defaultAsyncGetOperatorType);
-            var queryOperatorConfig = CreateConfiguration<TEntity, IAsyncQueryOperator<TEntity, TQueryInput>>(null, _defaultAsyncQueryOperatorType);
-            var addOperatorConfig = CreateConfiguration<TEntity, IAsyncAddOperator<TEntity>>(null, _defaultAsyncAddOperatorType);
-            var updateOperatorConfig = CreateConfiguration<TEntity, IAsyncUpdateOperator<TEntity>>(null, _defaultAsyncUpdateOperatorType);
-            var deleteOperatorConfig = CreateConfiguration<TEntity, IAsyncDeleteOperator<TEntity>>(null, _defaultAsyncDeleteOperatorType);
+            var getOperatorConfig = ConfigureAsyncGetOperator<TEntity, TGetInput>();
+            var queryOperatorConfig = ConfigureAsyncQueryOperator<TEntity, TQueryInput>();
+            var addOperatorConfig = ConfigureAsyncAddOperator<TEntity>();
+            var updateOperatorConfig = ConfigureAsyncUpdateOperator<TEntity>();
+            var deleteOperatorConfig = ConfigureAsyncDeleteOperator<TEntity>();
 
-            var result = new OperatorConfigurationCrudCollection<TEntity, TQueryInput, TGetInput>(getOperatorConfig, queryOperatorConfig, addOperatorConfig, updateOperatorConfig, deleteOperatorConfig);
+            var result = new CrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput>(getOperatorConfig, queryOperatorConfig, addOperatorConfig, updateOperatorConfig, deleteOperatorConfig);
+
+            _crudOperatorCollectionServiceDescriptors.Add(new ServiceDescriptor(typeof(ICrudOperatorCollection<TEntity, TGetInput, TQueryInput>), result.Build, _serviceLifetime));
 
             return result;
         }
 
-        public IOperatorConfiguration<IAsyncGetOperator<TEntity>> ConfigureAsyncGetOperator<TEntity>(Func<IServiceProvider, IAsyncGetOperator<TEntity>> operatorFactory = null)
+        public IAsyncGetOperatorConfiguration<TEntity> ConfigureAsyncGetOperator<TEntity>(Func<IServiceProvider, IAsyncGetOperator<TEntity>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, IAsyncGetOperator<TEntity>>(operatorFactory, _defaultAsyncGetOperatorType);
+            operatorFactory = GetOperatorFactory<TEntity, IAsyncGetOperator<TEntity>>(operatorFactory, _defaultAsyncGetOperatorType);
+
+            var result = new AsyncGetOperatorConfiguration<TEntity>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncGetOperator<TEntity>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncGetOperator<TEntity, TInput>> ConfigureAsyncGetOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncGetOperator<TEntity, TInput>> operatorFactory = null)
-            where TInput : IHasIncludes<TEntity>
+        public IAsyncGetOperatorConfiguration<TEntity, TInput> ConfigureAsyncGetOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncGetOperator<TEntity, TInput>> operatorFactory = null)
+            where TInput : GetInput<TEntity>
         {
-            return CreateConfiguration<TEntity, TInput, IAsyncGetOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncGetOperatorTypeWithCustomInput);
+            operatorFactory = GetOperatorFactory<TEntity, TInput, IAsyncGetOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncGetOperatorTypeWithCustomInput);
+
+            var result = new AsyncGetOperatorConfiguration<TEntity, TInput>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncGetOperator<TEntity, TInput>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncQueryOperator<TEntity>> ConfigureAsyncQueryOperator<TEntity>(Func<IServiceProvider, IAsyncQueryOperator<TEntity>> operatorFactory = null)
+        public IAsyncQueryOperatorConfiguration<TEntity> ConfigureAsyncQueryOperator<TEntity>(Func<IServiceProvider, IAsyncQueryOperator<TEntity>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, IAsyncQueryOperator<TEntity>>(operatorFactory, _defaultAsyncQueryOperatorType);
+            operatorFactory = GetOperatorFactory<TEntity, IAsyncQueryOperator<TEntity>>(operatorFactory, _defaultAsyncQueryOperatorType);
+
+            var result = new AsyncQueryOperatorConfiguration<TEntity>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncQueryOperator<TEntity>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncQueryOperator<TEntity, TInput>> ConfigureAsyncQueryOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncQueryOperator<TEntity, TInput>> operatorFactory = null)
-            where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        public IAsyncQueryOperatorConfiguration<TEntity, TInput> ConfigureAsyncQueryOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncQueryOperator<TEntity, TInput>> operatorFactory = null)
+            where TInput : QueryInput<TEntity>
         {
-            return CreateConfiguration<TEntity, TInput, IAsyncQueryOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncQueryOperatorTypeWithCustomInput);
+            operatorFactory = GetOperatorFactory<TEntity, TInput, IAsyncQueryOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncQueryOperatorTypeWithCustomInput);
+
+            var result = new AsyncQueryOperatorConfiguration<TEntity, TInput>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncQueryOperator<TEntity, TInput>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncAddOperator<TEntity>> ConfigureAsyncAddOperator<TEntity>(Func<IServiceProvider, IAsyncAddOperator<TEntity>> operatorFactory = null)
+        public IAsyncAddOperatorConfiguration<TEntity> ConfigureAsyncAddOperator<TEntity>(Func<IServiceProvider, IAsyncAddOperator<TEntity>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, IAsyncAddOperator<TEntity>>(operatorFactory, _defaultAsyncAddOperatorType);
+            operatorFactory = GetOperatorFactory<TEntity, IAsyncAddOperator<TEntity>>(operatorFactory, _defaultAsyncAddOperatorType);
+
+            var result = new AsyncAddOperatorConfiguration<TEntity>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncAddOperator<TEntity>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncAddOperator<TEntity, TInput>> ConfigureAsyncAddOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory = null)
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> ConfigureAsyncAddOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, TInput, IAsyncAddOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncAddOperatorTypeWithCustomInput);
+            operatorFactory = GetOperatorFactory<TEntity, TInput, IAsyncAddOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncAddOperatorTypeWithCustomInput);
+
+            var result = new AsyncAddOperatorConfiguration<TEntity, TInput>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncAddOperator<TEntity, TInput>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncUpdateOperator<TEntity>> ConfigureAsyncUpdateOperator<TEntity>(Func<IServiceProvider, IAsyncUpdateOperator<TEntity>> operatorFactory = null)
+        public IAsyncUpdateOperatorConfiguration<TEntity> ConfigureAsyncUpdateOperator<TEntity>(Func<IServiceProvider, IAsyncUpdateOperator<TEntity>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, IAsyncUpdateOperator<TEntity>>(operatorFactory, _defaultAsyncUpdateOperatorType);
+            operatorFactory = GetOperatorFactory<TEntity, IAsyncUpdateOperator<TEntity>>(operatorFactory, _defaultAsyncUpdateOperatorType);
+
+            var result = new AsyncUpdateOperatorConfiguration<TEntity>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncUpdateOperator<TEntity>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncUpdateOperator<TEntity, TInput>> ConfigureAsyncUpdateOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncUpdateOperator<TEntity, TInput>> operatorFactory = null)
+        public IAsyncUpdateOperatorConfiguration<TEntity, TInput> ConfigureAsyncUpdateOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncUpdateOperator<TEntity, TInput>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, TInput, IAsyncUpdateOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncUpdateOperatorTypeWithCustomInput);
+            operatorFactory = GetOperatorFactory<TEntity, TInput, IAsyncUpdateOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncUpdateOperatorTypeWithCustomInput);
+
+            var result = new AsyncUpdateOperatorConfiguration<TEntity, TInput>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncUpdateOperator<TEntity, TInput>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncDeleteOperator<TEntity>> ConfigureAsyncDeleteOperator<TEntity>(Func<IServiceProvider, IAsyncDeleteOperator<TEntity>> operatorFactory = null)
+        public IAsyncDeleteOperatorConfiguration<TEntity> ConfigureAsyncDeleteOperator<TEntity>(Func<IServiceProvider, IAsyncDeleteOperator<TEntity>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, IAsyncDeleteOperator<TEntity>>(operatorFactory, _defaultAsyncDeleteOperatorType);
+            operatorFactory = GetOperatorFactory<TEntity, IAsyncDeleteOperator<TEntity>>(operatorFactory, _defaultAsyncDeleteOperatorType);
+
+            var result = new AsyncDeleteOperatorConfiguration<TEntity>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncDeleteOperator<TEntity>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        public IOperatorConfiguration<IAsyncDeleteOperator<TEntity, TInput>> ConfigureAsyncDeleteOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> operatorFactory = null)
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> ConfigureAsyncDeleteOperator<TEntity, TInput>(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> operatorFactory = null)
         {
-            return CreateConfiguration<TEntity, TInput, IAsyncDeleteOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncDeleteOperatorTypeWithCustomInput);
+            operatorFactory = GetOperatorFactory<TEntity, TInput, IAsyncDeleteOperator<TEntity, TInput>>(operatorFactory, _defaultAsyncDeleteOperatorTypeWithCustomInput);
+
+            var result = new AsyncDeleteOperatorConfiguration<TEntity, TInput>(operatorFactory);
+
+            _configurations.Add(result);
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncDeleteOperator<TEntity, TInput>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
-        private IOperatorConfiguration<TOperator> CreateConfiguration<TEntity, TOperator>(Func<IServiceProvider, TOperator> operatorFactory, Type defaultType)
+        private Func<IServiceProvider, TOperator> GetOperatorFactory<TEntity, TOperator>(Func<IServiceProvider, TOperator> operatorFactory, Type defaultType)
             where TOperator : class
         {
             if (operatorFactory == null && defaultType == null)
@@ -194,13 +260,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 };
             }
 
-            var configuration = new OperatorConfiguration<TOperator>(operatorFactory);
-            _configurations.Add(configuration);
-
-            return configuration;
+            return operatorFactory;
         }
 
-        private IOperatorConfiguration<TOperator> CreateConfiguration<TEntity, TInput, TOperator>(Func<IServiceProvider, TOperator> operatorFactory, Type defaultType)
+        private Func<IServiceProvider, TOperator> GetOperatorFactory<TEntity, TInput, TOperator>(Func<IServiceProvider, TOperator> operatorFactory, Type defaultType)
             where TOperator : class
         {
             if (operatorFactory == null && defaultType == null)
@@ -217,17 +280,19 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 };
             }
 
-            var configuration = new OperatorConfiguration<TOperator>(operatorFactory);
-            _configurations.Add(configuration);
-
-            return configuration;
+            return operatorFactory;
         }
 
-        public void AddOperators(IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Transient)
+        public void AddOperators(IServiceCollection services)
         {
-            foreach (var conf in _configurations)
+            foreach (var operatorServiceDescriptor in _operatorServiceDescriptors)
             {
-                services.Add(new ServiceDescriptor(conf.OperatorType, conf.Build, lifetime));
+                services.Add(operatorServiceDescriptor);
+            }
+
+            foreach (var crudOperatorCollectionServiceDescriptor in _crudOperatorCollectionServiceDescriptors)
+            {
+                services.Add(crudOperatorCollectionServiceDescriptor);
             }
         }
     }

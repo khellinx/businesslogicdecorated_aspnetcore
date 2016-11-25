@@ -1,6 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Decorators;
 using Digipolis.BusinessLogicDecorated.Inputs;
-using Digipolis.BusinessLogicDecorated.Inputs.Constraints;
 using Digipolis.BusinessLogicDecorated.Operators;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,21 +10,46 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Configuration
 {
-    public class AsyncQueryOperatorConfiguration<TEntity> : AsyncQueryOperatorConfiguration<TEntity, QueryInput<TEntity>>
+    public class AsyncQueryOperatorConfiguration<TEntity> : OperatorConfiguration<IAsyncQueryOperator<TEntity>>, IAsyncQueryOperatorConfiguration<TEntity>
     {
-        public AsyncQueryOperatorConfiguration(Func<IServiceProvider, IAsyncQueryOperator<TEntity, QueryInput<TEntity>>> operatorFactory) : base(operatorFactory)
+        public AsyncQueryOperatorConfiguration(Func<IServiceProvider, IAsyncQueryOperator<TEntity>> operatorFactory) : base(typeof(TEntity), operatorFactory)
         {
+        }
+
+        public IAsyncQueryOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IQueryPreprocessor<TEntity>> preprocessorFactory = null)
+        {
+            if (preprocessorFactory == null)
+            {
+                preprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IQueryPreprocessor<TEntity>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncQueryPreprocessingDecorator<TEntity>(op, preprocessorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncQueryOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IQueryPreprocessor<TEntity>
+        {
+            Func<IServiceProvider, IQueryPreprocessor<TEntity>> preprocessorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TPreprocessor>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncQueryPreprocessingDecorator<TEntity>(op, preprocessorFactory(serviceProvider)));
+
+            return this;
         }
     }
 
     public class AsyncQueryOperatorConfiguration<TEntity, TInput> : OperatorConfiguration<IAsyncQueryOperator<TEntity, TInput>>, IAsyncQueryOperatorConfiguration<TEntity, TInput>
-        where TInput : IHasIncludes<TEntity>, IHasFilter<TEntity>, IHasOrder<TEntity>
+        where TInput : QueryInput<TEntity>
     {
-        public AsyncQueryOperatorConfiguration(Func<IServiceProvider, IAsyncQueryOperator<TEntity, TInput>> operatorFactory) : base(operatorFactory)
+        public AsyncQueryOperatorConfiguration(Func<IServiceProvider, IAsyncQueryOperator<TEntity, TInput>> operatorFactory) : base(typeof(TEntity), operatorFactory)
         {
         }
 
-        public IOperatorConfiguration<IAsyncQueryOperator<TEntity, TInput>> WithPreprocessing(Func<IServiceProvider, IQueryPreprocessor<TEntity, TInput>> preprocessorFactory = null)
+        public IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IQueryPreprocessor<TEntity, TInput>> preprocessorFactory = null)
         {
             if (preprocessorFactory == null)
             {
@@ -37,7 +61,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return this;
         }
 
-        public IOperatorConfiguration<IAsyncQueryOperator<TEntity, TInput>> WithPreprocessing<TPreprocessor>()
+        public IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IQueryPreprocessor<TEntity, TInput>
         {
             Func<IServiceProvider, IQueryPreprocessor<TEntity, TInput>> preprocessorFactory = serviceProvider =>

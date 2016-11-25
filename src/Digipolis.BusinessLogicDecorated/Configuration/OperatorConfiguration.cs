@@ -12,18 +12,20 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
     public class OperatorConfiguration<TOperator> : IOperatorConfiguration<TOperator>
         where TOperator : class
     {
-        public OperatorConfiguration(Func<IServiceProvider, TOperator> operatorFactory)
+        public OperatorConfiguration(Type entityType, Func<IServiceProvider, TOperator> operatorFactory)
         {
+            EntityType = entityType;
             OperatorType = typeof(TOperator);
             OperatorFactory = operatorFactory;
             Decorators = new List<Func<TOperator, IServiceProvider, TOperator>>();
         }
 
+        public Type EntityType { get; }
         public Type OperatorType { get; }
         public Func<IServiceProvider, TOperator> OperatorFactory { get; }
         public IList<Func<TOperator, IServiceProvider, TOperator>> Decorators { get; }
 
-        public object Build(IServiceProvider serviceProvider)
+        public virtual TOperator Build(IServiceProvider serviceProvider)
         {
             var op = OperatorFactory(serviceProvider);
 
