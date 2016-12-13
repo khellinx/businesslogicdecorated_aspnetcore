@@ -16,6 +16,9 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncUpdateOperatorConfiguration<TEntity> UpdateOperatorConfiguration { get; }
         IAsyncDeleteOperatorConfiguration<TEntity> DeleteOperatorConfiguration { get; }
 
+        ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class;
+
         ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class;
 

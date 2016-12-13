@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Postprocessors;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using Digipolis.BusinessLogicDecorated.Validators;
 using System;
@@ -14,6 +15,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncUpdateOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncUpdateOperator<TEntity>;
 
+        IAsyncUpdateOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IUpdatePostprocessor<TEntity>> PostprocessorFactory = null);
+        IAsyncUpdateOperatorConfiguration<TEntity> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IUpdatePostprocessor<TEntity>;
+
         IAsyncUpdateOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IUpdatePreprocessor<TEntity>> preprocessorFactory = null);
         IAsyncUpdateOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IUpdatePreprocessor<TEntity>;
@@ -28,6 +33,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncUpdateOperator<TEntity, TInput>> preprocessorFactory = null);
         IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncUpdateOperator<TEntity, TInput>;
+
+        IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IUpdatePostprocessor<TEntity, TInput>> PostprocessorFactory = null);
+        IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IUpdatePostprocessor<TEntity, TInput>;
 
         IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IUpdatePreprocessor<TEntity, TInput>> preprocessorFactory = null);
         IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()

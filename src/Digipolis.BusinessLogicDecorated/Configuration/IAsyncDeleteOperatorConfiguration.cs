@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Postprocessors;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using Digipolis.BusinessLogicDecorated.Validators;
 using System;
@@ -14,6 +15,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncDeleteOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncDeleteOperator<TEntity>;
 
+        IAsyncDeleteOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IDeletePostprocessor<TEntity>> PostprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IDeletePostprocessor<TEntity>;
+
         IAsyncDeleteOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IDeletePreprocessor<TEntity>> preprocessorFactory = null);
         IAsyncDeleteOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IDeletePreprocessor<TEntity>;
@@ -28,6 +33,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> preprocessorFactory = null);
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncDeleteOperator<TEntity, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IDeletePostprocessor<TEntity, TInput>> PostprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IDeletePostprocessor<TEntity, TInput>;
 
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IDeletePreprocessor<TEntity, TInput>> preprocessorFactory = null);
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()

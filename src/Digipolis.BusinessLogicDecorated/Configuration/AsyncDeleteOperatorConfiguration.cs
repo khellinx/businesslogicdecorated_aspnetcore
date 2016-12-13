@@ -1,5 +1,6 @@
 ﻿using Digipolis.BusinessLogicDecorated.Decorators;
 using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Postprocessors;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using Digipolis.BusinessLogicDecorated.Validators;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             {
                 return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
             };
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IDeletePostprocessor<TEntity>> PostprocessorFactory = null)
+        {
+            if (PostprocessorFactory == null)
+            {
+                PostprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IDeletePostprocessor<TEntity>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncDeletePostprocessingDecorator<TEntity>(op, PostprocessorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IDeletePostprocessor<TEntity>
+        {
+            Func<IServiceProvider, IDeletePostprocessor<TEntity>> PostprocessorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TPostprocessor>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncDeletePostprocessingDecorator<TEntity>(op, PostprocessorFactory(serviceProvider)));
 
             return this;
         }
@@ -115,6 +141,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             {
                 return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
             };
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IDeletePostprocessor<TEntity, TInput>> PostprocessorFactory = null)
+        {
+            if (PostprocessorFactory == null)
+            {
+                PostprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IDeletePostprocessor<TEntity, TInput>>();
+            }
+
+            SurroundWithDecorator((op, serviceProvider) => new AsyncDeletePostprocessingDecorator<TEntity, TInput>(op, PostprocessorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IDeletePostprocessor<TEntity, TInput>
+        {
+            Func<IServiceProvider, IDeletePostprocessor<TEntity, TInput>> PostprocessorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TPostprocessor>(serviceProvider);
+            };
+
+            SurroundWithDecorator((op, serviceProvider) => new AsyncDeletePostprocessingDecorator<TEntity, TInput>(op, PostprocessorFactory(serviceProvider)));
 
             return this;
         }

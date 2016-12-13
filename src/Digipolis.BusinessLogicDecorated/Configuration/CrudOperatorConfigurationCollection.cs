@@ -1,5 +1,6 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Postprocessors;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using Digipolis.BusinessLogicDecorated.Validators;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,45 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 );
 
             return result;
+        }
+
+        public ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class
+        {
+            // Get the type and type info from the provided Postprocessor
+            var PostprocessorType = typeof(TPostprocessor);
+            var PostprocessorTypeInfo = PostprocessorType.GetTypeInfo();
+
+            // Get the type info from all Postprocessor interfaces
+            var getTypeInfo = typeof(IGetPostprocessor<TEntity, TGetInput>).GetTypeInfo();
+            var queryTypeInfo = typeof(IQueryPostprocessor<TEntity, TQueryInput>).GetTypeInfo();
+            var addTypeInfo = typeof(IAddPostprocessor<TEntity>).GetTypeInfo();
+            var updateTypeInfo = typeof(IUpdatePostprocessor<TEntity>).GetTypeInfo();
+            var deleteTypeInfo = typeof(IDeletePostprocessor<TEntity>).GetTypeInfo();
+
+            // Only add Postprocessors to operators for which the Postprocessor has the correct Postprocessor interface for.
+            if (getTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                GetOperatorConfiguration.WithPostprocessing(serviceProvider => (IGetPostprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+            }
+            if (queryTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                QueryOperatorConfiguration.WithPostprocessing(serviceProvider => (IQueryPostprocessor<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+            }
+            if (addTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                AddOperatorConfiguration.WithPostprocessing(serviceProvider => (IAddPostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+            }
+            if (updateTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                UpdateOperatorConfiguration.WithPostprocessing(serviceProvider => (IUpdatePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+            }
+            if (deleteTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                DeleteOperatorConfiguration.WithPostprocessing(serviceProvider => (IDeletePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+            }
+
+            return this;
         }
 
         public ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithPreprocessing<TPreprocessor>()

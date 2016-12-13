@@ -1,6 +1,7 @@
 ﻿using Digipolis.BusinessLogicDecorated.Decorators;
 using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Postprocessors;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -35,6 +36,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             {
                 return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
             };
+
+            return this;
+        }
+
+        public IAsyncQueryOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IQueryPostprocessor<TEntity>> PostprocessorFactory = null)
+        {
+            if (PostprocessorFactory == null)
+            {
+                PostprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IQueryPostprocessor<TEntity>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncQueryPostprocessingDecorator<TEntity>(op, PostprocessorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncQueryOperatorConfiguration<TEntity> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IQueryPostprocessor<TEntity>
+        {
+            Func<IServiceProvider, IQueryPostprocessor<TEntity>> PostprocessorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TPostprocessor>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncQueryPostprocessingDecorator<TEntity>(op, PostprocessorFactory(serviceProvider)));
 
             return this;
         }
@@ -91,6 +117,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             {
                 return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
             };
+
+            return this;
+        }
+
+        public IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IQueryPostprocessor<TEntity, TInput>> PostprocessorFactory = null)
+        {
+            if (PostprocessorFactory == null)
+            {
+                PostprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IQueryPostprocessor<TEntity, TInput>>();
+            }
+
+            SurroundWithDecorator((op, serviceProvider) => new AsyncQueryPostprocessingDecorator<TEntity, TInput>(op, PostprocessorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IQueryPostprocessor<TEntity, TInput>
+        {
+            Func<IServiceProvider, IQueryPostprocessor<TEntity, TInput>> PostprocessorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TPostprocessor>(serviceProvider);
+            };
+
+            SurroundWithDecorator((op, serviceProvider) => new AsyncQueryPostprocessingDecorator<TEntity, TInput>(op, PostprocessorFactory(serviceProvider)));
 
             return this;
         }

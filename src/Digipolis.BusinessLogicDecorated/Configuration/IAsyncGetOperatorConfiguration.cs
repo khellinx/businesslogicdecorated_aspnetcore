@@ -1,5 +1,6 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Postprocessors;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncGetOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncGetOperator<TEntity>;
 
+        IAsyncGetOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity>> PostprocessorFactory = null);
+        IAsyncGetOperatorConfiguration<TEntity> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IGetPostprocessor<TEntity>;
+
         IAsyncGetOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IGetPreprocessor<TEntity>> preprocessorFactory = null);
         IAsyncGetOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IGetPreprocessor<TEntity>;
@@ -25,6 +30,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncGetOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity, TInput>> preprocessorFactory = null);
         IAsyncGetOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncGetOperator<TEntity, TInput>;
+
+        IAsyncGetOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity, TInput>> PostprocessorFactory = null);
+        IAsyncGetOperatorConfiguration<TEntity, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IGetPostprocessor<TEntity, TInput>;
 
         IAsyncGetOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IGetPreprocessor<TEntity, TInput>> preprocessorFactory = null);
         IAsyncGetOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()

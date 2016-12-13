@@ -1,5 +1,6 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.Postprocessors;
 using Digipolis.BusinessLogicDecorated.Preprocessors;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncQueryOperatorConfiguration<TEntity> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncQueryOperator<TEntity>;
 
+        IAsyncQueryOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IQueryPostprocessor<TEntity>> PostprocessorFactory = null);
+        IAsyncQueryOperatorConfiguration<TEntity> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IQueryPostprocessor<TEntity>;
+
         IAsyncQueryOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IQueryPreprocessor<TEntity>> preprocessorFactory = null);
         IAsyncQueryOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IQueryPreprocessor<TEntity>;
@@ -25,6 +30,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncQueryOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncQueryOperator<TEntity, TInput>> preprocessorFactory = null);
         IAsyncQueryOperatorConfiguration<TEntity, TInput> WithCustomOperator<TCustomOperator>()
             where TCustomOperator : class, IAsyncQueryOperator<TEntity, TInput>;
+
+        IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IQueryPostprocessor<TEntity, TInput>> PostprocessorFactory = null);
+        IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IQueryPostprocessor<TEntity, TInput>;
 
         IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IQueryPreprocessor<TEntity, TInput>> preprocessorFactory = null);
         IAsyncQueryOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()
