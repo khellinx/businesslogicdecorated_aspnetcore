@@ -50,6 +50,44 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return result;
         }
 
+        public ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithCustomOperator<TCustomOperator>()
+        {
+            // Get the type and type info from the provided Postprocessor
+            var CustomOperatorType = typeof(TCustomOperator);
+            var CustomOperatorTypeInfo = CustomOperatorType.GetTypeInfo();
+
+            // Get the type info from all Postprocessor interfaces
+            var getTypeInfo = typeof(IAsyncGetOperator<TEntity, TGetInput>).GetTypeInfo();
+            var queryTypeInfo = typeof(IAsyncQueryOperator<TEntity, TQueryInput>).GetTypeInfo();
+            var addTypeInfo = typeof(IAsyncAddOperator<TEntity>).GetTypeInfo();
+            var updateTypeInfo = typeof(IAsyncUpdateOperator<TEntity>).GetTypeInfo();
+            var deleteTypeInfo = typeof(IAsyncDeleteOperator<TEntity>).GetTypeInfo();
+
+            // Only use custom operator for which the given type implements the correct Operator interfaces.
+            if (getTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
+            {
+                GetOperatorConfiguration.WithPostprocessing(serviceProvider => (IGetPostprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+            }
+            if (queryTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
+            {
+                QueryOperatorConfiguration.WithPostprocessing(serviceProvider => (IQueryPostprocessor<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+            }
+            if (addTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
+            {
+                AddOperatorConfiguration.WithPostprocessing(serviceProvider => (IAddPostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+            }
+            if (updateTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
+            {
+                UpdateOperatorConfiguration.WithPostprocessing(serviceProvider => (IUpdatePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+            }
+            if (deleteTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
+            {
+                DeleteOperatorConfiguration.WithPostprocessing(serviceProvider => (IDeletePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+            }
+
+            return this;
+        }
+
         public ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithPostprocessing<TPostprocessor>()
             where TPostprocessor : class
         {
@@ -64,7 +102,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var updateTypeInfo = typeof(IUpdatePostprocessor<TEntity>).GetTypeInfo();
             var deleteTypeInfo = typeof(IDeletePostprocessor<TEntity>).GetTypeInfo();
 
-            // Only add Postprocessors to operators for which the Postprocessor has the correct Postprocessor interface for.
+            // Only add Postprocessors to operators for which the given type implements the correct Postprocessor interface.
             if (getTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
             {
                 GetOperatorConfiguration.WithPostprocessing(serviceProvider => (IGetPostprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
@@ -103,7 +141,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var updateTypeInfo = typeof(IUpdatePreprocessor<TEntity>).GetTypeInfo();
             var deleteTypeInfo = typeof(IDeletePreprocessor<TEntity>).GetTypeInfo();
 
-            // Only add preprocessors to operators for which the preprocessor has the correct preprocessor interface for.
+            // Only add preprocessors to operators for which the given type implements the correct preprocessor interface.
             if (getTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
             {
                 GetOperatorConfiguration.WithPreprocessing(serviceProvider => (IGetPreprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
@@ -140,7 +178,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var updateTypeInfo = typeof(IUpdateValidator<TEntity>).GetTypeInfo();
             var deleteTypeInfo = typeof(IDeleteValidator<TEntity>).GetTypeInfo();
 
-            // Only add validators to operators for which the validator has the correct validator interface for.
+            // Only add validators to operators for which the given type implements the correct validator interface.
             if (addTypeInfo.IsAssignableFrom(validatorTypeInfo))
             {
                 AddOperatorConfiguration.WithValidation(serviceProvider => (IAddValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
