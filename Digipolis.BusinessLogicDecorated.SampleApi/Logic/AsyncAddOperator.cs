@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 using Digipolis.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -9,31 +10,29 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
 {
     public class AsyncAddOperator<TEntity> : AsyncAddOperator<TEntity, object>, IAsyncAddOperator<TEntity>
     {
-        public AsyncAddOperator(IUowProvider uowProvider) : base(uowProvider)
+        public AsyncAddOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
         }
     }
 
-    public class AsyncAddOperator<TEntity, TInput> : IAsyncAddOperator<TEntity, TInput>
+    public class AsyncAddOperator<TEntity, TInput> : Worker, IAsyncAddOperator<TEntity, TInput>
     {
         private IUowProvider _uowProvider;
 
-        public AsyncAddOperator(IUowProvider uowProvider)
+        public AsyncAddOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
-            _uowProvider = uowProvider;
         }
 
-        public virtual async Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
+        public async Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
         {
-            using (var uow = _uowProvider.CreateUnitOfWork(false))
-            {
-                var repository = uow.GetRepository<TEntity>();
-                repository.Add(entity);
+            var uow = UnitOfWorkScope.GetUnitOfWork(true);
 
-                await uow.SaveChangesAsync();
+            var repository = uow.GetRepository<TEntity>();
 
-                return entity;
-            }
+            repository.Add(entity);
+            await uow.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

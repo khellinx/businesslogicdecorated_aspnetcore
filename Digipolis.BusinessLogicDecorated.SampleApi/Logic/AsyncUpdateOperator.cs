@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 using Digipolis.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -9,31 +10,27 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
 {
     public class AsyncUpdateOperator<TEntity> : AsyncUpdateOperator<TEntity, object>, IAsyncUpdateOperator<TEntity>
     {
-        public AsyncUpdateOperator(IUowProvider uowProvider) : base(uowProvider)
+        public AsyncUpdateOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
         }
     }
 
-    public class AsyncUpdateOperator<TEntity, TInput> : IAsyncUpdateOperator<TEntity, TInput>
+    public class AsyncUpdateOperator<TEntity, TInput> : Worker, IAsyncUpdateOperator<TEntity, TInput>
     {
-        private IUowProvider _uowProvider;
-
-        public AsyncUpdateOperator(IUowProvider uowProvider)
+        public AsyncUpdateOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
-            _uowProvider = uowProvider;
         }
 
-        public virtual async Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput))
+        public async Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput))
         {
-            using (var uow = _uowProvider.CreateUnitOfWork(false))
-            {
-                var repository = uow.GetRepository<TEntity>();
-                repository.Update(entity);
+            var uow = UnitOfWorkScope.GetUnitOfWork(true);
 
-                await uow.SaveChangesAsync();
+            var repository = uow.GetRepository<TEntity>();
 
-                return entity;
-            }
+            repository.Update(entity);
+            await uow.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

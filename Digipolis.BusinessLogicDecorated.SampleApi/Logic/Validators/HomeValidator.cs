@@ -4,27 +4,47 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 
 namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Validators
 {
-    public class HomeValidator : IAddValidator<Home>, IUpdateValidator<Home>
+    public class HomeValidator : Worker, IAsyncAddValidator<Home>, IAsyncUpdateValidator<Home>
     {
-        public void ValidateForAdd(Home entity, object input = null)
+        public HomeValidator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
-            ValidateForWrite(entity);
         }
 
-        public void ValidateForUpdate(Home entity, object input = null)
+        public async Task ValidateForAdd(Home entity, object input = null)
         {
-            ValidateForWrite(entity);
+            await ValidateForWrite(entity);
         }
 
-        private void ValidateForWrite(Home entity)
+        public async Task ValidateForUpdate(Home entity, object input = null)
+        {
+            await ValidateForWrite(entity);
+        }
+
+        private async Task ValidateForWrite(Home entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
             if (string.IsNullOrEmpty(entity.Address))
                 throw new ArgumentNullException(nameof(entity.Address));
+
+            var hasUniqueAddress = await HasUniqueAddress(entity);
+            if (!hasUniqueAddress)
+            {
+                throw new ArgumentException("There is already a home with the provided address.");
+            }
+        }
+
+        private async Task<bool> HasUniqueAddress(Home entity)
+        {
+            var uow = UnitOfWorkScope.GetUnitOfWork(false);
+            var repository = uow.GetRepository<Home>();
+
+            var exists = await repository.AnyAsync(x => x.Address.Equals(entity.Address, StringComparison.OrdinalIgnoreCase));
+            return !exists;
         }
     }
 }

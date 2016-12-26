@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Operators;
+using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 using Digipolis.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -9,29 +10,25 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
 {
     public class AsyncDeleteOperator<TEntity> : AsyncDeleteOperator<TEntity, object>, IAsyncDeleteOperator<TEntity>
     {
-        public AsyncDeleteOperator(IUowProvider uowProvider) : base(uowProvider)
+        public AsyncDeleteOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
         }
     }
 
-    public class AsyncDeleteOperator<TEntity, TInput> : IAsyncDeleteOperator<TEntity, TInput>
+    public class AsyncDeleteOperator<TEntity, TInput> : Worker, IAsyncDeleteOperator<TEntity, TInput>
     {
-        private IUowProvider _uowProvider;
-
-        public AsyncDeleteOperator(IUowProvider uowProvider)
+        public AsyncDeleteOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
-            _uowProvider = uowProvider;
         }
 
-        public virtual async Task DeleteAsync(int id, TInput input = default(TInput))
+        public async Task DeleteAsync(int id, TInput input = default(TInput))
         {
-            using (var uow = _uowProvider.CreateUnitOfWork(false))
-            {
-                var repository = uow.GetRepository<TEntity>();
-                repository.Remove(id);
+            var uow = UnitOfWorkScope.GetUnitOfWork(true);
 
-                await uow.SaveChangesAsync();
-            }
+            var repository = uow.GetRepository<TEntity>();
+
+            repository.Remove(id);
+            await uow.SaveChangesAsync();
         }
     }
 }

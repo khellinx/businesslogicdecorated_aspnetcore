@@ -40,6 +40,9 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
             services.AddDataAccess<EntityContext>();
             services.AddDbContext<EntityContext>(builder => builder.UseInMemoryDatabase("BusinessLogicDecorated"));
 
+            // Add the Unit of work scope
+            services.AddScoped<IUnitOfWorkScope, UnitOfWorkScope>();
+
             // Add the business logic
             services.AddBusinessLogic();
         }

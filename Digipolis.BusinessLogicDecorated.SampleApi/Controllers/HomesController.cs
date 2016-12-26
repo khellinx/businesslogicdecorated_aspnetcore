@@ -38,8 +38,11 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
 
         // POST api/homes
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Post([FromBody]Home entity)
         {
+            var result = await OperatorCollection.AddAsync(entity);
+            int id = result?.Id ?? 0;
+            return Created($"api/homes/{id}", result);
         }
 
         // PUT api/homes/5

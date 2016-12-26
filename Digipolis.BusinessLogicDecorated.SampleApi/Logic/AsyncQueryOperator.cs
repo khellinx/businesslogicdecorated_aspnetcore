@@ -1,6 +1,7 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.Operators;
 using Digipolis.BusinessLogicDecorated.Paging;
+using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 using Digipolis.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -11,51 +12,41 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
 {
     public class AsyncQueryOperator<TEntity> : AsyncQueryOperator<TEntity, QueryInput<TEntity>>, IAsyncQueryOperator<TEntity>
     {
-        public AsyncQueryOperator(IUowProvider uowProvider) : base(uowProvider)
+        public AsyncQueryOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
         }
     }
 
-    public class AsyncQueryOperator<TEntity, TInput> : IAsyncQueryOperator<TEntity, TInput>
+    public class AsyncQueryOperator<TEntity, TInput> : Worker, IAsyncQueryOperator<TEntity, TInput>
         where TInput : QueryInput<TEntity>
     {
-        private IUowProvider _uowProvider;
-
-        public AsyncQueryOperator(IUowProvider uowProvider)
+        public AsyncQueryOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
-            _uowProvider = uowProvider;
         }
 
-        public virtual async Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput))
+        public async Task<IEnumerable<TEntity>> QueryAsync(TInput input = null)
         {
-            using (var uow = _uowProvider.CreateUnitOfWork(false))
-            {
-                var repository = uow.GetRepository<TEntity>();
-                return await repository.QueryAsync(input?.Filter, input?.Order, input?.Includes);
-            }
+            var uow = UnitOfWorkScope.GetUnitOfWork(true);
+
+            var repository = uow.GetRepository<TEntity>();
+            return await repository.QueryAsync(input?.Filter, input?.Order, input?.Includes);
         }
 
-        public virtual async Task<PagedCollection<TEntity>> QueryAsync(Page page, TInput input = default(TInput))
+        public async Task<PagedCollection<TEntity>> QueryAsync(Page page, TInput input = null)
         {
-            if (page == null)
+            var uow = UnitOfWorkScope.GetUnitOfWork(true);
+
+            var repository = uow.GetRepository<TEntity>();
+            var startRow = (page.Number - 1) * page.Size;
+
+            var result = new PagedCollection<TEntity>()
             {
-                throw new ArgumentNullException(nameof(page));
-            }
+                Page = page,
+                Data = await repository.QueryPageAsync(startRow, page.Size, input?.Filter, input?.Order, input?.Includes),
+                TotalCount = await repository.CountAsync(input?.Filter)
+            };
 
-            using (var uow = _uowProvider.CreateUnitOfWork(false))
-            {
-                var repository = uow.GetRepository<TEntity>();
-                var startRow = (page.Number - 1) * page.Size;
-
-                var result = new PagedCollection<TEntity>()
-                {
-                    Page = page,
-                    Data = await repository.QueryPageAsync(startRow, page.Size, input?.Filter, input?.Order, input?.Includes),
-                    TotalCount = await repository.CountAsync(input?.Filter)
-                };
-
-                return result;
-            }
+            return result;
         }
     }
 }
