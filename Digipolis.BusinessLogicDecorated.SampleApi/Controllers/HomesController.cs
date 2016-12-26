@@ -13,12 +13,12 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
     [Route("api/[controller]")]
     public class HomesController : Controller
     {
-        public HomesController(ICrudOperatorCollection<Home, GetInput<Home>, QueryInput<Home>> operatorCollection)
+        public HomesController(ICrudOperatorCollection<Home> operatorCollection)
         {
             OperatorCollection = operatorCollection;
         }
 
-        public ICrudOperatorCollection<Home, GetInput<Home>, QueryInput<Home>> OperatorCollection { get; private set; }
+        public ICrudOperatorCollection<Home> OperatorCollection { get; private set; }
 
         // GET api/homes
         [HttpGet]

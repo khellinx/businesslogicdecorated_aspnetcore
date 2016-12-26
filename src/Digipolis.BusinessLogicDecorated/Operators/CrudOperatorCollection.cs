@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Operators
 {
+    public class CrudOperatorCollection<TEntity> : CrudOperatorCollection<TEntity, GetInput<TEntity>, QueryInput<TEntity>>, ICrudOperatorCollection<TEntity>
+    {
+        public CrudOperatorCollection(IAsyncGetOperator<TEntity, GetInput<TEntity>> asyncGetOperator, IAsyncQueryOperator<TEntity, QueryInput<TEntity>> asyncQueryOperator, IAsyncAddOperator<TEntity> asyncAddOperator, IAsyncUpdateOperator<TEntity> asyncUpdateOperator, IAsyncDeleteOperator<TEntity> asyncDeleteOperator) : base(asyncGetOperator, asyncQueryOperator, asyncAddOperator, asyncUpdateOperator, asyncDeleteOperator)
+        {
+        }
+    }
+
     public class CrudOperatorCollection<TEntity, TGetInput, TQueryInput> : ICrudOperatorCollection<TEntity, TGetInput, TQueryInput>
         where TGetInput : GetInput<TEntity>
         where TQueryInput : QueryInput<TEntity>

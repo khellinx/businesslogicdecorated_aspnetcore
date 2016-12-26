@@ -83,9 +83,41 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             }
         }
 
-        public ICrudOperatorConfigurationCollection<TEntity, GetInput<TEntity>, QueryInput<TEntity>> ConfigureAsyncCrudOperators<TEntity>()
+        public ICrudOperatorConfigurationCollection<TEntity> ConfigureAsyncCrudOperators<TEntity>()
         {
-            return ConfigureAsyncCrudOperators<TEntity, GetInput<TEntity>, QueryInput<TEntity>>();
+            if (_defaultAsyncGetOperatorTypeWithCustomInput == null)
+            {
+                throw new InvalidOperationException("There is no default Get operator with custom input implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
+            }
+            if (_defaultAsyncQueryOperatorTypeWithCustomInput == null)
+            {
+                throw new InvalidOperationException("There is no default Query operator with custom input implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
+            }
+            if (_defaultAsyncAddOperatorType == null)
+            {
+                throw new InvalidOperationException("There is no default Add operator implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
+            }
+            if (_defaultAsyncUpdateOperatorType == null)
+            {
+                throw new InvalidOperationException("There is no default Update operator implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
+            }
+            if (_defaultAsyncDeleteOperatorType == null)
+            {
+                throw new InvalidOperationException("There is no default Delete operator implementation specified. All operator types should have a default implementation in order to use the CRUD configuration.");
+            }
+
+            var getOperatorConfig = ConfigureAsyncGetOperator<TEntity, GetInput<TEntity>>();
+            var queryOperatorConfig = ConfigureAsyncQueryOperator<TEntity, QueryInput<TEntity>>();
+            var addOperatorConfig = ConfigureAsyncAddOperator<TEntity>();
+            var updateOperatorConfig = ConfigureAsyncUpdateOperator<TEntity>();
+            var deleteOperatorConfig = ConfigureAsyncDeleteOperator<TEntity>();
+
+            var result = new CrudOperatorConfigurationCollection<TEntity>(getOperatorConfig, queryOperatorConfig, addOperatorConfig, updateOperatorConfig, deleteOperatorConfig);
+
+            _crudOperatorCollectionServiceDescriptors.Add(new ServiceDescriptor(typeof(ICrudOperatorCollection<TEntity>), result.BuildSimple, _serviceLifetime));
+            _crudOperatorCollectionServiceDescriptors.Add(new ServiceDescriptor(typeof(ICrudOperatorCollection<TEntity, GetInput<TEntity>, QueryInput<TEntity>>), result.Build, _serviceLifetime));
+
+            return result;
         }
 
         public ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> ConfigureAsyncCrudOperators<TEntity, TGetInput, TQueryInput>()

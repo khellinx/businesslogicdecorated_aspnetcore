@@ -1,4 +1,5 @@
 ﻿using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.Operators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Configuration
 {
+    public interface ICrudOperatorConfigurationCollection<TEntity> : ICrudOperatorConfigurationCollection<TEntity, GetInput<TEntity>, QueryInput<TEntity>>
+    {
+        ICrudOperatorCollection<TEntity> BuildSimple(IServiceProvider serviceProvider);
+    }
+
     public interface ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput>
         where TGetInput : GetInput<TEntity>
         where TQueryInput : QueryInput<TEntity>
@@ -15,6 +21,8 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncAddOperatorConfiguration<TEntity> AddOperatorConfiguration { get; }
         IAsyncUpdateOperatorConfiguration<TEntity> UpdateOperatorConfiguration { get; }
         IAsyncDeleteOperatorConfiguration<TEntity> DeleteOperatorConfiguration { get; }
+
+        ICrudOperatorCollection<TEntity, TGetInput, TQueryInput> Build(IServiceProvider serviceProvider);
 
         ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithPostprocessing<TPostprocessor>()
             where TPostprocessor : class;

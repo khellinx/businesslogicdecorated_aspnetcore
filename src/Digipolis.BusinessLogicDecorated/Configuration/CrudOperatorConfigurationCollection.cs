@@ -12,6 +12,26 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Configuration
 {
+    public class CrudOperatorConfigurationCollection<TEntity> : CrudOperatorConfigurationCollection<TEntity, GetInput<TEntity>, QueryInput<TEntity>>, ICrudOperatorConfigurationCollection<TEntity>
+    {
+        public CrudOperatorConfigurationCollection(IAsyncGetOperatorConfiguration<TEntity, GetInput<TEntity>> getOperatorConfiguration, IAsyncQueryOperatorConfiguration<TEntity, QueryInput<TEntity>> queryOperatorConfiguration, IAsyncAddOperatorConfiguration<TEntity> addOperatorConfiguration, IAsyncUpdateOperatorConfiguration<TEntity> updateOperatorConfiguration, IAsyncDeleteOperatorConfiguration<TEntity> deleteOperatorConfiguration) : base(getOperatorConfiguration, queryOperatorConfiguration, addOperatorConfiguration, updateOperatorConfiguration, deleteOperatorConfiguration)
+        {
+        }
+
+        public virtual ICrudOperatorCollection<TEntity> BuildSimple(IServiceProvider serviceProvider)
+        {
+            var result = new CrudOperatorCollection<TEntity>(
+                GetOperatorConfiguration?.Build(serviceProvider),
+                QueryOperatorConfiguration?.Build(serviceProvider),
+                AddOperatorConfiguration?.Build(serviceProvider),
+                UpdateOperatorConfiguration?.Build(serviceProvider),
+                DeleteOperatorConfiguration?.Build(serviceProvider)
+                );
+
+            return result;
+        }
+    }
+
     public class CrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> : ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput>
         where TQueryInput : QueryInput<TEntity>
         where TGetInput : GetInput<TEntity>
@@ -64,25 +84,37 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var deleteTypeInfo = typeof(IAsyncDeleteOperator<TEntity>).GetTypeInfo();
 
             // Only use custom operator for which the given type implements the correct Operator interfaces.
+            bool foundInterface = false;
             if (getTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
             {
-                GetOperatorConfiguration.WithPostprocessing(serviceProvider => (IGetPostprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                GetOperatorConfiguration.WithCustomOperator(serviceProvider => (IAsyncGetOperator<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                foundInterface = true;
             }
             if (queryTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
             {
-                QueryOperatorConfiguration.WithPostprocessing(serviceProvider => (IQueryPostprocessor<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                QueryOperatorConfiguration.WithCustomOperator(serviceProvider => (IAsyncQueryOperator<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                foundInterface = true;
             }
             if (addTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
             {
-                AddOperatorConfiguration.WithPostprocessing(serviceProvider => (IAddPostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                AddOperatorConfiguration.WithCustomOperator(serviceProvider => (IAsyncAddOperator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                foundInterface = true;
             }
             if (updateTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
             {
-                UpdateOperatorConfiguration.WithPostprocessing(serviceProvider => (IUpdatePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                UpdateOperatorConfiguration.WithCustomOperator(serviceProvider => (IAsyncUpdateOperator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                foundInterface = true;
             }
             if (deleteTypeInfo.IsAssignableFrom(CustomOperatorTypeInfo))
             {
-                DeleteOperatorConfiguration.WithPostprocessing(serviceProvider => (IDeletePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                DeleteOperatorConfiguration.WithCustomOperator(serviceProvider => (IAsyncDeleteOperator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, CustomOperatorType));
+                foundInterface = true;
+            }
+
+            // If the postprocessor does not implement one of the postprocessor interfaces, throw an exception.
+            if (!foundInterface)
+            {
+                throw new Exception($"The provided custom operator '{typeof(TCustomOperator).Name}' should at least implement one of the operator interfaces.");
             }
 
             return this;
@@ -103,25 +135,37 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var deleteTypeInfo = typeof(IDeletePostprocessor<TEntity>).GetTypeInfo();
 
             // Only add Postprocessors to operators for which the given type implements the correct Postprocessor interface.
+            bool foundInterface = false;
             if (getTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
             {
                 GetOperatorConfiguration.WithPostprocessing(serviceProvider => (IGetPostprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
             }
             if (queryTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
             {
                 QueryOperatorConfiguration.WithPostprocessing(serviceProvider => (IQueryPostprocessor<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
             }
             if (addTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
             {
                 AddOperatorConfiguration.WithPostprocessing(serviceProvider => (IAddPostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
             }
             if (updateTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
             {
                 UpdateOperatorConfiguration.WithPostprocessing(serviceProvider => (IUpdatePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
             }
             if (deleteTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
             {
                 DeleteOperatorConfiguration.WithPostprocessing(serviceProvider => (IDeletePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
+            }
+
+            // If the postprocessor does not implement one of the postprocessor interfaces, throw an exception.
+            if (!foundInterface)
+            {
+                throw new Exception($"The provided postprocessor '{typeof(TPostprocessor).Name}' should at least implement one of the postprocessor interfaces.");
             }
 
             return this;
@@ -142,25 +186,37 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var deleteTypeInfo = typeof(IDeletePreprocessor<TEntity>).GetTypeInfo();
 
             // Only add preprocessors to operators for which the given type implements the correct preprocessor interface.
+            bool foundInterface = false;
             if (getTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
             {
                 GetOperatorConfiguration.WithPreprocessing(serviceProvider => (IGetPreprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
             }
             if (queryTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
             {
                 QueryOperatorConfiguration.WithPreprocessing(serviceProvider => (IQueryPreprocessor<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
             }
             if (addTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
             {
                 AddOperatorConfiguration.WithPreprocessing(serviceProvider => (IAddPreprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
             }
             if (updateTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
             {
                 UpdateOperatorConfiguration.WithPreprocessing(serviceProvider => (IUpdatePreprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
             }
             if (deleteTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
             {
                 DeleteOperatorConfiguration.WithPreprocessing(serviceProvider => (IDeletePreprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
+            }
+
+            // If the preprocessor does not implement one of the preprocessor interfaces, throw an exception.
+            if (!foundInterface)
+            {
+                throw new Exception($"The provided preprocessor '{typeof(TPreprocessor).Name}' should at least implement one of preprocessor interfaces.");
             }
 
             return this;
@@ -179,17 +235,27 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var deleteTypeInfo = typeof(IDeleteValidator<TEntity>).GetTypeInfo();
 
             // Only add validators to operators for which the given type implements the correct validator interface.
+            bool foundInterface = false;
             if (addTypeInfo.IsAssignableFrom(validatorTypeInfo))
             {
                 AddOperatorConfiguration.WithValidation(serviceProvider => (IAddValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
+                foundInterface = true;
             }
             if (updateTypeInfo.IsAssignableFrom(validatorTypeInfo))
             {
                 UpdateOperatorConfiguration.WithValidation(serviceProvider => (IUpdateValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
+                foundInterface = true;
             }
             if (deleteTypeInfo.IsAssignableFrom(validatorTypeInfo))
             {
                 DeleteOperatorConfiguration.WithValidation(serviceProvider => (IDeleteValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
+                foundInterface = true;
+            }
+
+            // If the validator does not implement one of the validator interfaces, throw an exception.
+            if (!foundInterface)
+            {
+                throw new Exception($"The provided validator '{typeof(TValidator).Name}' should at least implement one of the validator interfaces.");
             }
 
             return this;

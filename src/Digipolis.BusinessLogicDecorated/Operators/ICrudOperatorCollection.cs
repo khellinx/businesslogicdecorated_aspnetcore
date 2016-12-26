@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Operators
 {
+    public interface ICrudOperatorCollection<TEntity> : ICrudOperatorCollection<TEntity, GetInput<TEntity>, QueryInput<TEntity>>
+    {
+    }
+
     public interface ICrudOperatorCollection<TEntity, TGetInput, TQueryInput>
         where TGetInput : GetInput<TEntity>
         where TQueryInput : QueryInput<TEntity>
     {
-        IAsyncGetOperator<TEntity, TGetInput> AsyncGetOperator { get; }
-        IAsyncQueryOperator<TEntity, TQueryInput> AsyncQueryOperator { get; }
-        IAsyncAddOperator<TEntity> AsyncAddOperator { get; }
-        IAsyncUpdateOperator<TEntity> AsyncUpdateOperator { get; }
-        IAsyncDeleteOperator<TEntity> AsyncDeleteOperator { get; }
-
         Task<TEntity> GetAsync(int id, TGetInput input = default(TGetInput));
         Task<IEnumerable<TEntity>> QueryAsync(TQueryInput input = default(TQueryInput));
         Task<PagedCollection<TEntity>> QueryAsync(Page page, TQueryInput input = default(TQueryInput));
