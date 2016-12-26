@@ -12,6 +12,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncDeleteValidationDecorator(IAsyncDeleteOperator<TEntity, object> deleteOperator, IDeleteValidator<TEntity, object> validator) : base(deleteOperator, validator)
         {
         }
+
+        public AsyncDeleteValidationDecorator(IAsyncDeleteOperator<TEntity, object> deleteOperator, IAsyncDeleteValidator<TEntity, object> validator) : base(deleteOperator, validator)
+        {
+        }
     }
 
     public class AsyncDeleteValidationDecorator<TEntity, TInput> : AsyncDeleteDecorator<TEntity, TInput>
@@ -26,13 +30,31 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Validator = validator;
         }
 
-        public IDeleteValidator<TEntity, TInput> Validator { get; private set; }
-
-        public override Task DeleteAsync(int id, TInput input = default(TInput))
+        public AsyncDeleteValidationDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator, IAsyncDeleteValidator<TEntity, TInput> validator) : base(deleteOperator)
         {
-            Validator.ValidateForDelete(id, input);
+            if (validator == null)
+            {
+                throw new ArgumentNullException(nameof(validator));
+            }
 
-            return DeleteOperator.DeleteAsync(id, input);
+            AsyncValidator = validator;
+        }
+
+        public IDeleteValidator<TEntity, TInput> Validator { get; private set; }
+        public IAsyncDeleteValidator<TEntity, TInput> AsyncValidator { get; private set; }
+
+        public override async Task DeleteAsync(int id, TInput input = default(TInput))
+        {
+            if (Validator != null)
+            {
+                Validator.ValidateForDelete(id, input);
+            }
+            if (AsyncValidator != null)
+            {
+                await AsyncValidator.ValidateForDelete(id, input);
+            }
+
+            await DeleteOperator.DeleteAsync(id, input);
         }
     }
 }

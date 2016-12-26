@@ -12,6 +12,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncAddValidationDecorator(IAsyncAddOperator<TEntity, object> addOperator, IAddValidator<TEntity, object> validator) : base(addOperator, validator)
         {
         }
+
+        public AsyncAddValidationDecorator(IAsyncAddOperator<TEntity, object> addOperator, IAsyncAddValidator<TEntity, object> validator) : base(addOperator, validator)
+        {
+        }
     }
 
     public class AsyncAddValidationDecorator<TEntity, TInput> : AsyncAddDecorator<TEntity, TInput>
@@ -26,13 +30,31 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Validator = validator;
         }
 
-        public IAddValidator<TEntity, TInput> Validator { get; private set; }
-
-        public override Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
+        public AsyncAddValidationDecorator(IAsyncAddOperator<TEntity, TInput> addOperator, IAsyncAddValidator<TEntity, TInput> validator) : base(addOperator)
         {
-            Validator.ValidateForAdd(entity, input);
+            if (validator == null)
+            {
+                throw new ArgumentNullException(nameof(validator));
+            }
 
-            return AddOperator.AddAsync(entity, input);
+            AsyncValidator = validator;
+        }
+
+        public IAddValidator<TEntity, TInput> Validator { get; private set; }
+        public IAsyncAddValidator<TEntity, TInput> AsyncValidator { get; private set; }
+
+        public override async Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
+        {
+            if (Validator != null)
+            {
+                Validator.ValidateForAdd(entity, input);
+            }
+            if (AsyncValidator != null)
+            {
+                await AsyncValidator.ValidateForAdd(entity, input);
+            }
+
+            return await AddOperator.AddAsync(entity, input);
         }
     }
 }

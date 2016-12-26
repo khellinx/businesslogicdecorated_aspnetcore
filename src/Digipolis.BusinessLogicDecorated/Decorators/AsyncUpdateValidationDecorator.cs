@@ -12,6 +12,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncUpdateValidationDecorator(IAsyncUpdateOperator<TEntity, object> updateOperator, IUpdateValidator<TEntity, object> validator) : base(updateOperator, validator)
         {
         }
+
+        public AsyncUpdateValidationDecorator(IAsyncUpdateOperator<TEntity, object> updateOperator, IAsyncUpdateValidator<TEntity, object> validator) : base(updateOperator, validator)
+        {
+        }
     }
 
     public class AsyncUpdateValidationDecorator<TEntity, TInput> : AsyncUpdateDecorator<TEntity, TInput>
@@ -26,13 +30,31 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Validator = validator;
         }
 
-        public IUpdateValidator<TEntity, TInput> Validator { get; private set; }
-
-        public override Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput))
+        public AsyncUpdateValidationDecorator(IAsyncUpdateOperator<TEntity, TInput> updateOperator, IAsyncUpdateValidator<TEntity, TInput> validator) : base(updateOperator)
         {
-            Validator.ValidateForUpdate(entity, input);
+            if (validator == null)
+            {
+                throw new ArgumentNullException(nameof(validator));
+            }
 
-            return UpdateOperator.UpdateAsync(entity, input);
+            AsyncValidator = validator;
+        }
+
+        public IUpdateValidator<TEntity, TInput> Validator { get; private set; }
+        public IAsyncUpdateValidator<TEntity, TInput> AsyncValidator { get; private set; }
+
+        public override async Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput))
+        {
+            if (Validator != null)
+            {
+                Validator.ValidateForUpdate(entity, input);
+            }
+            if (AsyncValidator != null)
+            {
+                await AsyncValidator.ValidateForUpdate(entity, input);
+            }
+
+            return await UpdateOperator.UpdateAsync(entity, input);
         }
     }
 }

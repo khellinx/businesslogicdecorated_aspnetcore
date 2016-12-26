@@ -26,6 +26,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncDeleteOperatorConfiguration<TEntity> WithValidation(Func<IServiceProvider, IDeleteValidator<TEntity>> validatorFactory = null);
         IAsyncDeleteOperatorConfiguration<TEntity> WithValidation<TValidator>()
             where TValidator : class, IDeleteValidator<TEntity>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity> WithAsyncValidation(Func<IServiceProvider, IAsyncDeleteValidator<TEntity>> validatorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncDeleteValidator<TEntity>;
     }
 
     public interface IAsyncDeleteOperatorConfiguration<TEntity, TInput> : IOperatorConfiguration<IAsyncDeleteOperator<TEntity, TInput>>
@@ -45,5 +49,9 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithValidation(Func<IServiceProvider, IDeleteValidator<TEntity, TInput>> validatorFactory = null);
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithValidation<TValidator>()
             where TValidator : class, IDeleteValidator<TEntity, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithAsyncValidation(Func<IServiceProvider, IAsyncDeleteValidator<TEntity, TInput>> validatorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncDeleteValidator<TEntity, TInput>;
     }
 }

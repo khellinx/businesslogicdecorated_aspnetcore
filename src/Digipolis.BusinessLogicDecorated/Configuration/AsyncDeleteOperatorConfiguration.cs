@@ -114,6 +114,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             return this;
         }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity> WithAsyncValidation(Func<IServiceProvider, IAsyncDeleteValidator<TEntity>> validatorFactory = null)
+        {
+            if (validatorFactory == null)
+            {
+                validatorFactory = serviceProvider => serviceProvider.GetRequiredService<IAsyncDeleteValidator<TEntity>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncDeleteValidationDecorator<TEntity>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncDeleteValidator<TEntity>
+        {
+            Func<IServiceProvider, IAsyncDeleteValidator<TEntity>> validatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TValidator>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncDeleteValidationDecorator<TEntity>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
     }
 
     public class AsyncDeleteOperatorConfiguration<TEntity, TInput> : OperatorConfiguration<IAsyncDeleteOperator<TEntity, TInput>>, IAsyncDeleteOperatorConfiguration<TEntity, TInput>
@@ -211,6 +236,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             where TValidator : class, IDeleteValidator<TEntity, TInput>
         {
             Func<IServiceProvider, IDeleteValidator<TEntity, TInput>> validatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TValidator>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncDeleteValidationDecorator<TEntity, TInput>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithAsyncValidation(Func<IServiceProvider, IAsyncDeleteValidator<TEntity, TInput>> validatorFactory = null)
+        {
+            if (validatorFactory == null)
+            {
+                validatorFactory = serviceProvider => serviceProvider.GetRequiredService<IAsyncDeleteValidator<TEntity, TInput>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncDeleteValidationDecorator<TEntity, TInput>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncDeleteValidator<TEntity, TInput>
+        {
+            Func<IServiceProvider, IAsyncDeleteValidator<TEntity, TInput>> validatorFactory = serviceProvider =>
             {
                 return ActivatorUtilities.GetServiceOrCreateInstance<TValidator>(serviceProvider);
             };

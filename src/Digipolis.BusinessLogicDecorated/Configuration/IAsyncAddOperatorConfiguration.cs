@@ -26,6 +26,10 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncAddOperatorConfiguration<TEntity> WithValidation(Func<IServiceProvider, IAddValidator<TEntity>> validatorFactory = null);
         IAsyncAddOperatorConfiguration<TEntity> WithValidation<TValidator>()
             where TValidator : class, IAddValidator<TEntity>;
+
+        IAsyncAddOperatorConfiguration<TEntity> WithAsyncValidation(Func<IServiceProvider, IAsyncAddValidator<TEntity>> validatorFactory = null);
+        IAsyncAddOperatorConfiguration<TEntity> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncAddValidator<TEntity>;
     }
 
     public interface IAsyncAddOperatorConfiguration<TEntity, TInput> : IOperatorConfiguration<IAsyncAddOperator<TEntity, TInput>>
@@ -45,5 +49,9 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncAddOperatorConfiguration<TEntity, TInput> WithValidation(Func<IServiceProvider, IAddValidator<TEntity, TInput>> validatorFactory = null);
         IAsyncAddOperatorConfiguration<TEntity, TInput> WithValidation<TValidator>()
             where TValidator : class, IAddValidator<TEntity, TInput>;
+
+        IAsyncAddOperatorConfiguration<TEntity, TInput> WithAsyncValidation(Func<IServiceProvider, IAsyncAddValidator<TEntity, TInput>> validatorFactory = null);
+        IAsyncAddOperatorConfiguration<TEntity, TInput> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncAddValidator<TEntity, TInput>;
     }
 }

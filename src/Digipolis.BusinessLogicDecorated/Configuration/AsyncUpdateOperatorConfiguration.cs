@@ -114,6 +114,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             return this;
         }
+
+        public IAsyncUpdateOperatorConfiguration<TEntity> WithAsyncValidation(Func<IServiceProvider, IAsyncUpdateValidator<TEntity>> validatorFactory = null)
+        {
+            if (validatorFactory == null)
+            {
+                validatorFactory = serviceProvider => serviceProvider.GetRequiredService<IAsyncUpdateValidator<TEntity>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncUpdateValidationDecorator<TEntity>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncUpdateOperatorConfiguration<TEntity> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncUpdateValidator<TEntity>
+        {
+            Func<IServiceProvider, IAsyncUpdateValidator<TEntity>> validatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TValidator>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncUpdateValidationDecorator<TEntity>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
     }
 
     public class AsyncUpdateOperatorConfiguration<TEntity, TInput> : OperatorConfiguration<IAsyncUpdateOperator<TEntity, TInput>>, IAsyncUpdateOperatorConfiguration<TEntity, TInput>
@@ -211,6 +236,31 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             where TValidator : class, IUpdateValidator<TEntity, TInput>
         {
             Func<IServiceProvider, IUpdateValidator<TEntity, TInput>> validatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TValidator>(serviceProvider);
+            };
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncUpdateValidationDecorator<TEntity, TInput>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithAsyncValidation(Func<IServiceProvider, IAsyncUpdateValidator<TEntity, TInput>> validatorFactory = null)
+        {
+            if (validatorFactory == null)
+            {
+                validatorFactory = serviceProvider => serviceProvider.GetRequiredService<IAsyncUpdateValidator<TEntity, TInput>>();
+            }
+
+            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncUpdateValidationDecorator<TEntity, TInput>(op, validatorFactory(serviceProvider)));
+
+            return this;
+        }
+
+        public IAsyncUpdateOperatorConfiguration<TEntity, TInput> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncUpdateValidator<TEntity, TInput>
+        {
+            Func<IServiceProvider, IAsyncUpdateValidator<TEntity, TInput>> validatorFactory = serviceProvider =>
             {
                 return ActivatorUtilities.GetServiceOrCreateInstance<TValidator>(serviceProvider);
             };

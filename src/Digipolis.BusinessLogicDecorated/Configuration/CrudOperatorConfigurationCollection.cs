@@ -233,6 +233,9 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var addTypeInfo = typeof(IAddValidator<TEntity>).GetTypeInfo();
             var updateTypeInfo = typeof(IUpdateValidator<TEntity>).GetTypeInfo();
             var deleteTypeInfo = typeof(IDeleteValidator<TEntity>).GetTypeInfo();
+            var asyncAddTypeInfo = typeof(IAsyncAddValidator<TEntity>).GetTypeInfo();
+            var asyncUpdateTypeInfo = typeof(IAsyncUpdateValidator<TEntity>).GetTypeInfo();
+            var asyncDeleteTypeInfo = typeof(IAsyncDeleteValidator<TEntity>).GetTypeInfo();
 
             // Only add validators to operators for which the given type implements the correct validator interface.
             bool foundInterface = false;
@@ -249,6 +252,21 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             if (deleteTypeInfo.IsAssignableFrom(validatorTypeInfo))
             {
                 DeleteOperatorConfiguration.WithValidation(serviceProvider => (IDeleteValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
+                foundInterface = true;
+            }
+            if (asyncAddTypeInfo.IsAssignableFrom(validatorTypeInfo))
+            {
+                AddOperatorConfiguration.WithAsyncValidation(serviceProvider => (IAsyncAddValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
+                foundInterface = true;
+            }
+            if (asyncUpdateTypeInfo.IsAssignableFrom(validatorTypeInfo))
+            {
+                UpdateOperatorConfiguration.WithAsyncValidation(serviceProvider => (IAsyncUpdateValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
+                foundInterface = true;
+            }
+            if (asyncDeleteTypeInfo.IsAssignableFrom(validatorTypeInfo))
+            {
+                DeleteOperatorConfiguration.WithAsyncValidation(serviceProvider => (IAsyncDeleteValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
                 foundInterface = true;
             }
 
