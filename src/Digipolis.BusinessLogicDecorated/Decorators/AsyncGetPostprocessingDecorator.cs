@@ -13,6 +13,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncGetPostprocessingDecorator(IAsyncGetOperator<TEntity> getOperator, IGetPostprocessor<TEntity> postprocessor) : base(getOperator, postprocessor)
         {
         }
+
+        public AsyncGetPostprocessingDecorator(IAsyncGetOperator<TEntity> getOperator, IAsyncGetPostprocessor<TEntity> postprocessor) : base(getOperator, postprocessor)
+        {
+        }
     }
 
     public class AsyncGetPostprocessingDecorator<TEntity, TInput> : AsyncGetDecorator<TEntity, TInput>
@@ -23,13 +27,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Postprocessor = postprocessor;
         }
 
+        public AsyncGetPostprocessingDecorator(IAsyncGetOperator<TEntity, TInput> getOperator, IAsyncGetPostprocessor<TEntity, TInput> postprocessor) : base(getOperator)
+        {
+            AsyncPostprocessor = postprocessor;
+        }
+
         public IGetPostprocessor<TEntity, TInput> Postprocessor { get; set; }
+        public IAsyncGetPostprocessor<TEntity, TInput> AsyncPostprocessor { get; set; }
 
         public override async Task<TEntity> GetAsync(int id, TInput input = default(TInput))
         {
             var result = await GetOperator.GetAsync(id, input);
 
-            Postprocessor.PostprocessForGet(input, ref result);
+            if (Postprocessor != null)
+            {
+                Postprocessor.PostprocessForGet(input, ref result);
+            }
+            if (AsyncPostprocessor != null)
+            {
+                await AsyncPostprocessor.PostprocessForGet(input, ref result);
+            }
 
             return result;
         }

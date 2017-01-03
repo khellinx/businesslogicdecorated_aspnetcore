@@ -12,6 +12,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncUpdatePostprocessingDecorator(IAsyncUpdateOperator<TEntity, object> updateOperator, IUpdatePostprocessor<TEntity, object> postprocessor) : base(updateOperator, postprocessor)
         {
         }
+
+        public AsyncUpdatePostprocessingDecorator(IAsyncUpdateOperator<TEntity, object> updateOperator, IAsyncUpdatePostprocessor<TEntity, object> postprocessor) : base(updateOperator, postprocessor)
+        {
+        }
     }
 
     public class AsyncUpdatePostprocessingDecorator<TEntity, TInput> : AsyncUpdateDecorator<TEntity, TInput>
@@ -21,13 +25,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Postprocessor = postprocessor;
         }
 
+        public AsyncUpdatePostprocessingDecorator(IAsyncUpdateOperator<TEntity, TInput> updateOperator, IAsyncUpdatePostprocessor<TEntity, TInput> postprocessor) : base(updateOperator)
+        {
+            AsyncPostprocessor = postprocessor;
+        }
+
         public IUpdatePostprocessor<TEntity, TInput> Postprocessor { get; set; }
+        public IAsyncUpdatePostprocessor<TEntity, TInput> AsyncPostprocessor { get; set; }
 
         public override async Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput))
         {
             var result = await UpdateOperator.UpdateAsync(entity, input);
 
-            Postprocessor.PostprocessForUpdate(entity, input, ref result);
+            if (Postprocessor != null)
+            {
+                Postprocessor.PostprocessForUpdate(entity, input, ref result);
+            }
+            if (AsyncPostprocessor != null)
+            {
+                await AsyncPostprocessor.PostprocessForUpdate(entity, input, ref result);
+            }
 
             return result;
         }

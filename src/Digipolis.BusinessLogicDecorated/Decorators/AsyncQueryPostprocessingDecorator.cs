@@ -14,6 +14,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncQueryPostprocessingDecorator(IAsyncQueryOperator<TEntity, QueryInput<TEntity>> queryOperator, IQueryPostprocessor<TEntity, QueryInput<TEntity>> postprocessor) : base(queryOperator, postprocessor)
         {
         }
+
+        public AsyncQueryPostprocessingDecorator(IAsyncQueryOperator<TEntity, QueryInput<TEntity>> queryOperator, IAsyncQueryPostprocessor<TEntity, QueryInput<TEntity>> postprocessor) : base(queryOperator, postprocessor)
+        {
+        }
     }
 
     public class AsyncQueryPostprocessingDecorator<TEntity, TInput> : AsyncQueryDecorator<TEntity, TInput>
@@ -24,13 +28,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Postprocessor = postprocessor;
         }
 
+        public AsyncQueryPostprocessingDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator, IAsyncQueryPostprocessor<TEntity, TInput> postprocessor) : base(queryOperator)
+        {
+            AsyncPostprocessor = postprocessor;
+        }
+
         public IQueryPostprocessor<TEntity, TInput> Postprocessor { get; set; }
+        public IAsyncQueryPostprocessor<TEntity, TInput> AsyncPostprocessor { get; set; }
 
         public override async Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput))
         {
             var result = await QueryOperator.QueryAsync(input);
 
-            Postprocessor.PostprocessForQuery(input, ref result);
+            if (Postprocessor != null)
+            {
+                Postprocessor.PostprocessForQuery(input, ref result);
+            }
+            if (AsyncPostprocessor != null)
+            {
+                await AsyncPostprocessor.PostprocessForQuery(input, ref result);
+            }
 
             return result;
         }
@@ -39,7 +56,14 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         {
             var result = await QueryOperator.QueryAsync(page, input);
 
-            Postprocessor.PostprocessForQuery(page, input, ref result);
+            if (Postprocessor != null)
+            {
+                Postprocessor.PostprocessForQuery(page, input, ref result);
+            }
+            if (AsyncPostprocessor != null)
+            {
+                await AsyncPostprocessor.PostprocessForQuery(page, input, ref result);
+            }
 
             return result;
         }

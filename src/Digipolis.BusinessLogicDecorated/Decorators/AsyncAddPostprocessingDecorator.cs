@@ -16,6 +16,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncAddPostprocessingDecorator(IAsyncAddOperator<TEntity, object> addOperator, IAddPostprocessor<TEntity, object> postprocessor) : base(addOperator, postprocessor)
         {
         }
+
+        public AsyncAddPostprocessingDecorator(IAsyncAddOperator<TEntity, object> addOperator, IAsyncAddPostprocessor<TEntity, object> postprocessor) : base(addOperator, postprocessor)
+        {
+        }
     }
 
     public class AsyncAddPostprocessingDecorator<TEntity, TInput> : AsyncAddDecorator<TEntity, TInput>
@@ -25,13 +29,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Postprocessor = postprocessor;
         }
 
+        public AsyncAddPostprocessingDecorator(IAsyncAddOperator<TEntity, TInput> addOperator, IAsyncAddPostprocessor<TEntity, TInput> postprocessor) : base(addOperator)
+        {
+            AsyncPostprocessor = postprocessor;
+        }
+
         public IAddPostprocessor<TEntity, TInput> Postprocessor { get; set; }
+        public IAsyncAddPostprocessor<TEntity, TInput> AsyncPostprocessor { get; set; }
 
         public override async Task<TEntity> AddAsync(TEntity entity, TInput input = default(TInput))
         {
             var result = await AddOperator.AddAsync(entity, input);
 
-            Postprocessor.PostprocessForAdd(entity, input, ref result);
+            if (Postprocessor != null)
+            {
+                Postprocessor.PostprocessForAdd(entity, input, ref result);
+            }
+            if (AsyncPostprocessor != null)
+            {
+                await AsyncPostprocessor.PostprocessForAdd(entity, input, ref result);
+            }
 
             return result;
         }

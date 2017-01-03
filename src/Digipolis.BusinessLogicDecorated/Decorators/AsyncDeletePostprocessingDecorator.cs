@@ -16,6 +16,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, object> deleteOperator, IDeletePostprocessor<TEntity, object> postprocessor) : base(deleteOperator, postprocessor)
         {
         }
+
+        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, object> deleteOperator, IAsyncDeletePostprocessor<TEntity, object> postprocessor) : base(deleteOperator, postprocessor)
+        {
+        }
     }
 
     public class AsyncDeletePostprocessingDecorator<TEntity, TInput> : AsyncDeleteDecorator<TEntity, TInput>
@@ -25,13 +29,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Postprocessor = postprocessor;
         }
 
+        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator, IAsyncDeletePostprocessor<TEntity, TInput> postprocessor) : base(deleteOperator)
+        {
+            AsyncPostprocessor = postprocessor;
+        }
+
         public IDeletePostprocessor<TEntity, TInput> Postprocessor { get; set; }
+        public IAsyncDeletePostprocessor<TEntity, TInput> AsyncPostprocessor { get; set; }
 
         public override async Task DeleteAsync(int id, TInput input = default(TInput))
         {
             await DeleteOperator.DeleteAsync(id, input);
 
-            Postprocessor.PostprocessForDelete(id, input);
+            if (Postprocessor != null)
+            {
+                Postprocessor.PostprocessForDelete(id, input);
+            }
+            if (AsyncPostprocessor != null)
+            {
+                await AsyncPostprocessor.PostprocessForDelete(id, input);
+            }
         }
     }
 }
