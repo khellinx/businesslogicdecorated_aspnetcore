@@ -41,7 +41,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPreprocessor != null)
             {
-                await AsyncPreprocessor.PreprocessForDelete(id, ref input);
+                await AsyncPreprocessor.PreprocessForDelete(id, input);
             }
 
             await DeleteOperator.DeleteAsync(id, input);

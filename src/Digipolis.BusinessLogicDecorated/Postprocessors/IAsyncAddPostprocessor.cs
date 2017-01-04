@@ -11,6 +11,6 @@ namespace Digipolis.BusinessLogicDecorated.Postprocessors
 
     public interface IAsyncAddPostprocessor<TEntity, TInput>
     {
-        Task PostprocessForAdd(TEntity entity, TInput input, ref TEntity result);
+        Task PostprocessForAdd(TEntity entity, TInput input, TEntity result);
     }
 }

@@ -43,7 +43,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPreprocessor != null)
             {
-                await AsyncPreprocessor.PreprocessForGet(ref input);
+                await AsyncPreprocessor.PreprocessForGet(input);
             }
 
             return await GetOperator.GetAsync(id, input);

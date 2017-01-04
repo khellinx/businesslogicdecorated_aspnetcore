@@ -44,7 +44,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPreprocessor != null)
             {
-                await AsyncPreprocessor.PreprocessForQuery(ref input);
+                await AsyncPreprocessor.PreprocessForQuery(input);
             }
 
             return await QueryOperator.QueryAsync(input);
@@ -58,7 +58,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPreprocessor != null)
             {
-                await AsyncPreprocessor.PreprocessForQuery(ref page, ref input);
+                await AsyncPreprocessor.PreprocessForQuery(page, input);
             }
 
             return await QueryOperator.QueryAsync(page, input);

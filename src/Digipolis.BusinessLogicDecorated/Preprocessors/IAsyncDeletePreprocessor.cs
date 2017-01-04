@@ -11,6 +11,6 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
 
     public interface IAsyncDeletePreprocessor<TEntity, TInput>
     {
-        Task PreprocessForDelete(int id, ref TInput input);
+        Task PreprocessForDelete(int id, TInput input);
     }
 }

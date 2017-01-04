@@ -14,7 +14,7 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
     public interface IAsyncQueryPreprocessor<TEntity, TInput>
         where TInput : QueryInput<TEntity>
     {
-        Task PreprocessForQuery(ref TInput input);
-        Task PreprocessForQuery(ref Page page, ref TInput input);
+        Task PreprocessForQuery(TInput input);
+        Task PreprocessForQuery(Page page, TInput input);
     }
 }

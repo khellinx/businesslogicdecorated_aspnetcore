@@ -13,6 +13,6 @@ namespace Digipolis.BusinessLogicDecorated.Postprocessors
     public interface IAsyncGetPostprocessor<TEntity, TInput>
         where TInput : GetInput<TEntity>
     {
-        Task PostprocessForGet(TInput input, ref TEntity result);
+        Task PostprocessForGet(TInput input, TEntity result);
     }
 }

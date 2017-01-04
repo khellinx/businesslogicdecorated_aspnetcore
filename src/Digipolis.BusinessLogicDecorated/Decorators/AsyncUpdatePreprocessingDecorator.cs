@@ -41,7 +41,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPreprocessor != null)
             {
-                await AsyncPreprocessor.PreprocessForUpdate(ref entity, ref input);
+                await AsyncPreprocessor.PreprocessForUpdate(entity, input);
             }
 
             return await UpdateOperator.UpdateAsync(entity, input);

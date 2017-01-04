@@ -13,6 +13,6 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
     public interface IAsyncGetPreprocessor<TEntity, TInput>
         where TInput : GetInput<TEntity>
     {
-        Task PreprocessForGet(ref TInput input);
+        Task PreprocessForGet(TInput input);
     }
 }

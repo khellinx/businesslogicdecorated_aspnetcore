@@ -14,7 +14,7 @@ namespace Digipolis.BusinessLogicDecorated.Postprocessors
     public interface IAsyncQueryPostprocessor<TEntity, TInput>
         where TInput : QueryInput<TEntity>
     {
-        Task PostprocessForQuery(TInput input, ref IEnumerable<TEntity> result);
-        Task PostprocessForQuery(Page page, TInput input, ref PagedCollection<TEntity> result);
+        Task PostprocessForQuery(TInput input, IEnumerable<TEntity> result);
+        Task PostprocessForQuery(Page page, TInput input, PagedCollection<TEntity> result);
     }
 }

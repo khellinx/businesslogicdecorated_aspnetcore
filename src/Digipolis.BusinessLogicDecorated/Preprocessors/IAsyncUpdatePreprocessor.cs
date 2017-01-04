@@ -11,6 +11,6 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
 
     public interface IAsyncUpdatePreprocessor<TEntity, TInput>
     {
-        Task PreprocessForUpdate(ref TEntity entity, ref TInput input);
+        Task PreprocessForUpdate(TEntity entity, TInput input);
     }
 }

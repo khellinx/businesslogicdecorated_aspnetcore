@@ -11,6 +11,6 @@ namespace Digipolis.BusinessLogicDecorated.Postprocessors
 
     public interface IAsyncUpdatePostprocessor<TEntity, TInput>
     {
-        Task PostprocessForUpdate(TEntity entity, TInput input, ref TEntity result);
+        Task PostprocessForUpdate(TEntity entity, TInput input, TEntity result);
     }
 }
