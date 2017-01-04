@@ -13,7 +13,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 {
     public class AsyncGetOperatorConfiguration<TEntity> : OperatorConfiguration<IAsyncGetOperator<TEntity>>, IAsyncGetOperatorConfiguration<TEntity>
     {
-        public AsyncGetOperatorConfiguration(Func<IServiceProvider, IAsyncGetOperator<TEntity>> operatorFactory) : base(typeof(TEntity), operatorFactory)
+        public AsyncGetOperatorConfiguration(Func<IServiceProvider, IAsyncGetOperator<TEntity>> operatorFactory) : base(operatorFactory)
         {
         }
 
@@ -40,14 +40,9 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return this;
         }
 
-        public IAsyncGetOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity>> PostprocessorFactory = null)
+        public IAsyncGetOperatorConfiguration<TEntity> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity>> postprocessorFactory = null)
         {
-            if (PostprocessorFactory == null)
-            {
-                PostprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IGetPostprocessor<TEntity>>();
-            }
-
-            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncGetPostprocessingDecorator<TEntity>(op, PostprocessorFactory(serviceProvider)));
+            AppendDecorator((op, dep) => new AsyncGetPostprocessingDecorator<TEntity>(op, dep), postprocessorFactory);
 
             return this;
         }
@@ -55,24 +50,29 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         public IAsyncGetOperatorConfiguration<TEntity> WithPostprocessing<TPostprocessor>()
             where TPostprocessor : class, IGetPostprocessor<TEntity>
         {
-            Func<IServiceProvider, IGetPostprocessor<TEntity>> PostprocessorFactory = serviceProvider =>
-            {
-                return ActivatorUtilities.GetServiceOrCreateInstance<TPostprocessor>(serviceProvider);
-            };
+            AppendDecorator<TPostprocessor>((op, dep) => new AsyncGetPostprocessingDecorator<TEntity>(op, dep));
 
-            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncGetPostprocessingDecorator<TEntity>(op, PostprocessorFactory(serviceProvider)));
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity> WithAsyncPostprocessing(Func<IServiceProvider, IAsyncGetPostprocessor<TEntity>> postprocessorFactory = null)
+        {
+            AppendDecorator((op, dep) => new AsyncGetPostprocessingDecorator<TEntity>(op, dep), postprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity> WithAsyncPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IAsyncGetPostprocessor<TEntity>
+        {
+            AppendDecorator<TPostprocessor>((op, dep) => new AsyncGetPostprocessingDecorator<TEntity>(op, dep));
 
             return this;
         }
 
         public IAsyncGetOperatorConfiguration<TEntity> WithPreprocessing(Func<IServiceProvider, IGetPreprocessor<TEntity>> preprocessorFactory = null)
         {
-            if (preprocessorFactory == null)
-            {
-                preprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IGetPreprocessor<TEntity>>();
-            }
-
-            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncGetPreprocessingDecorator<TEntity>(op, preprocessorFactory(serviceProvider)));
+            InsertDecorator((op, dep) => new AsyncGetPreprocessingDecorator<TEntity>(op, dep), preprocessorFactory);
 
             return this;
         }
@@ -80,12 +80,22 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         public IAsyncGetOperatorConfiguration<TEntity> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IGetPreprocessor<TEntity>
         {
-            Func<IServiceProvider, IGetPreprocessor<TEntity>> preprocessorFactory = serviceProvider =>
-            {
-                return ActivatorUtilities.GetServiceOrCreateInstance<TPreprocessor>(serviceProvider);
-            };
+            InsertDecorator<TPreprocessor>((op, dep) => new AsyncGetPreprocessingDecorator<TEntity>(op, dep));
 
-            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncGetPreprocessingDecorator<TEntity>(op, preprocessorFactory(serviceProvider)));
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity> WithAsyncPreprocessing(Func<IServiceProvider, IAsyncGetPreprocessor<TEntity>> preprocessorFactory = null)
+        {
+            InsertDecorator((op, dep) => new AsyncGetPreprocessingDecorator<TEntity>(op, dep), preprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity> WithAsyncPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IAsyncGetPreprocessor<TEntity>
+        {
+            InsertDecorator<TPreprocessor>((op, dep) => new AsyncGetPreprocessingDecorator<TEntity>(op, dep));
 
             return this;
         }
@@ -94,7 +104,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
     public class AsyncGetOperatorConfiguration<TEntity, TInput> : OperatorConfiguration<IAsyncGetOperator<TEntity, TInput>>, IAsyncGetOperatorConfiguration<TEntity, TInput>
         where TInput : GetInput<TEntity>
     {
-        public AsyncGetOperatorConfiguration(Func<IServiceProvider, IAsyncGetOperator<TEntity, TInput>> operatorFactory) : base(typeof(TEntity), operatorFactory)
+        public AsyncGetOperatorConfiguration(Func<IServiceProvider, IAsyncGetOperator<TEntity, TInput>> operatorFactory) : base(operatorFactory)
         {
         }
 
@@ -121,14 +131,9 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return this;
         }
 
-        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity, TInput>> PostprocessorFactory = null)
+        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity, TInput>> postprocessorFactory = null)
         {
-            if (PostprocessorFactory == null)
-            {
-                PostprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IGetPostprocessor<TEntity, TInput>>();
-            }
-
-            SurroundWithDecorator((op, serviceProvider) => new AsyncGetPostprocessingDecorator<TEntity, TInput>(op, PostprocessorFactory(serviceProvider)));
+            AppendDecorator((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TInput>(op, dep), postprocessorFactory);
 
             return this;
         }
@@ -136,24 +141,29 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         public IAsyncGetOperatorConfiguration<TEntity, TInput> WithPostprocessing<TPostprocessor>()
             where TPostprocessor : class, IGetPostprocessor<TEntity, TInput>
         {
-            Func<IServiceProvider, IGetPostprocessor<TEntity, TInput>> PostprocessorFactory = serviceProvider =>
-            {
-                return ActivatorUtilities.GetServiceOrCreateInstance<TPostprocessor>(serviceProvider);
-            };
+            AppendDecorator<TPostprocessor>((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TInput>(op, dep));
 
-            SurroundWithDecorator((op, serviceProvider) => new AsyncGetPostprocessingDecorator<TEntity, TInput>(op, PostprocessorFactory(serviceProvider)));
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithAsyncPostprocessing(Func<IServiceProvider, IAsyncGetPostprocessor<TEntity, TInput>> postprocessorFactory = null)
+        {
+            AppendDecorator((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TInput>(op, dep), postprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithAsyncPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IAsyncGetPostprocessor<TEntity, TInput>
+        {
+            AppendDecorator<TPostprocessor>((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TInput>(op, dep));
 
             return this;
         }
 
         public IAsyncGetOperatorConfiguration<TEntity, TInput> WithPreprocessing(Func<IServiceProvider, IGetPreprocessor<TEntity, TInput>> preprocessorFactory = null)
         {
-            if (preprocessorFactory == null)
-            {
-                preprocessorFactory = serviceProvider => serviceProvider.GetRequiredService<IGetPreprocessor<TEntity, TInput>>();
-            }
-
-            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncGetPreprocessingDecorator<TEntity, TInput>(op, preprocessorFactory(serviceProvider)));
+            InsertDecorator((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TInput>(op, dep), preprocessorFactory);
 
             return this;
         }
@@ -161,12 +171,22 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         public IAsyncGetOperatorConfiguration<TEntity, TInput> WithPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IGetPreprocessor<TEntity, TInput>
         {
-            Func<IServiceProvider, IGetPreprocessor<TEntity, TInput>> preprocessorFactory = serviceProvider =>
-            {
-                return ActivatorUtilities.GetServiceOrCreateInstance<TPreprocessor>(serviceProvider);
-            };
+            InsertDecorator<TPreprocessor>((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TInput>(op, dep));
 
-            InsertDecoratorBeforeOperator((op, serviceProvider) => new AsyncGetPreprocessingDecorator<TEntity, TInput>(op, preprocessorFactory(serviceProvider)));
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithAsyncPreprocessing(Func<IServiceProvider, IAsyncGetPreprocessor<TEntity, TInput>> preprocessorFactory = null)
+        {
+            InsertDecorator((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TInput>(op, dep), preprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithAsyncPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IAsyncGetPreprocessor<TEntity, TInput>
+        {
+            InsertDecorator<TPreprocessor>((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TInput>(op, dep));
 
             return this;
         }

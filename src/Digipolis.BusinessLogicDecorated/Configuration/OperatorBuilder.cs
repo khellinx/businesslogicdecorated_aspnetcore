@@ -23,14 +23,12 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         private Type _defaultAsyncDeleteOperatorType;
         private Type _defaultAsyncDeleteOperatorTypeWithCustomInput;
 
-        private IList<IOperatorConfiguration> _configurations;
         private IList<ServiceDescriptor> _operatorServiceDescriptors;
         private IList<ServiceDescriptor> _crudOperatorCollectionServiceDescriptors;
         private ServiceLifetime _serviceLifetime;
 
         public OperatorBuilder(ServiceLifetime lifetime = ServiceLifetime.Transient)
         {
-            _configurations = new List<IOperatorConfiguration>();
             _operatorServiceDescriptors = new List<ServiceDescriptor>();
             _crudOperatorCollectionServiceDescriptors = new List<ServiceDescriptor>();
             _serviceLifetime = lifetime;
@@ -164,7 +162,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncGetOperatorConfiguration<TEntity>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncGetOperator<TEntity>), result.Build, _serviceLifetime));
 
             return result;
@@ -177,7 +174,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncGetOperatorConfiguration<TEntity, TInput>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncGetOperator<TEntity, TInput>), result.Build, _serviceLifetime));
 
             return result;
@@ -189,7 +185,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncQueryOperatorConfiguration<TEntity>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncQueryOperator<TEntity>), result.Build, _serviceLifetime));
 
             return result;
@@ -202,7 +197,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncQueryOperatorConfiguration<TEntity, TInput>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncQueryOperator<TEntity, TInput>), result.Build, _serviceLifetime));
 
             return result;
@@ -214,7 +208,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncAddOperatorConfiguration<TEntity>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncAddOperator<TEntity>), result.Build, _serviceLifetime));
 
             return result;
@@ -226,7 +219,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncAddOperatorConfiguration<TEntity, TInput>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncAddOperator<TEntity, TInput>), result.Build, _serviceLifetime));
 
             return result;
@@ -238,7 +230,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncUpdateOperatorConfiguration<TEntity>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncUpdateOperator<TEntity>), result.Build, _serviceLifetime));
 
             return result;
@@ -250,7 +241,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncUpdateOperatorConfiguration<TEntity, TInput>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncUpdateOperator<TEntity, TInput>), result.Build, _serviceLifetime));
 
             return result;
@@ -262,7 +252,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncDeleteOperatorConfiguration<TEntity>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncDeleteOperator<TEntity>), result.Build, _serviceLifetime));
 
             return result;
@@ -274,7 +263,6 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
             var result = new AsyncDeleteOperatorConfiguration<TEntity, TInput>(operatorFactory);
 
-            _configurations.Add(result);
             _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncDeleteOperator<TEntity, TInput>), result.Build, _serviceLifetime));
 
             return result;

@@ -5,16 +5,10 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Configuration
 {
-    public interface IOperatorConfiguration
-    {
-        Type OperatorType { get; }
-        Type EntityType { get; }
-    }
-
-    public interface IOperatorConfiguration<TOperator> : IOperatorConfiguration
+    public interface IOperatorConfiguration<TOperator>
     {
         Func<IServiceProvider, TOperator> OperatorFactory { get; }
-        IList<Func<TOperator, IServiceProvider, TOperator>> Decorators { get; }
+        IList<Func<TOperator, IServiceProvider, TOperator>> DecoratorFactories { get; }
 
         TOperator Build(IServiceProvider serviceProvider);
     }

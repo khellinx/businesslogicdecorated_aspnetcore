@@ -134,6 +134,12 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var updateTypeInfo = typeof(IUpdatePostprocessor<TEntity>).GetTypeInfo();
             var deleteTypeInfo = typeof(IDeletePostprocessor<TEntity>).GetTypeInfo();
 
+            var asyncGetTypeInfo = typeof(IAsyncGetPostprocessor<TEntity, TGetInput>).GetTypeInfo();
+            var asyncQueryTypeInfo = typeof(IAsyncQueryPostprocessor<TEntity, TQueryInput>).GetTypeInfo();
+            var asyncAddTypeInfo = typeof(IAsyncAddPostprocessor<TEntity>).GetTypeInfo();
+            var asyncUpdateTypeInfo = typeof(IAsyncUpdatePostprocessor<TEntity>).GetTypeInfo();
+            var asyncDeleteTypeInfo = typeof(IAsyncDeletePostprocessor<TEntity>).GetTypeInfo();
+
             // Only add Postprocessors to operators for which the given type implements the correct Postprocessor interface.
             bool foundInterface = false;
             if (getTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
@@ -162,6 +168,32 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 foundInterface = true;
             }
 
+            if (asyncGetTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                GetOperatorConfiguration.WithAsyncPostprocessing(serviceProvider => (IAsyncGetPostprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
+            }
+            if (asyncQueryTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                QueryOperatorConfiguration.WithAsyncPostprocessing(serviceProvider => (IAsyncQueryPostprocessor<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
+            }
+            if (asyncAddTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                AddOperatorConfiguration.WithAsyncPostprocessing(serviceProvider => (IAsyncAddPostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
+            }
+            if (asyncUpdateTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                UpdateOperatorConfiguration.WithAsyncPostprocessing(serviceProvider => (IAsyncUpdatePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
+            }
+            if (asyncDeleteTypeInfo.IsAssignableFrom(PostprocessorTypeInfo))
+            {
+                DeleteOperatorConfiguration.WithAsyncPostprocessing(serviceProvider => (IAsyncDeletePostprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, PostprocessorType));
+                foundInterface = true;
+            }
+
             // If the postprocessor does not implement one of the postprocessor interfaces, throw an exception.
             if (!foundInterface)
             {
@@ -184,6 +216,12 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var addTypeInfo = typeof(IAddPreprocessor<TEntity>).GetTypeInfo();
             var updateTypeInfo = typeof(IUpdatePreprocessor<TEntity>).GetTypeInfo();
             var deleteTypeInfo = typeof(IDeletePreprocessor<TEntity>).GetTypeInfo();
+
+            var asyncGetTypeInfo = typeof(IAsyncGetPreprocessor<TEntity, TGetInput>).GetTypeInfo();
+            var asyncQueryTypeInfo = typeof(IAsyncQueryPreprocessor<TEntity, TQueryInput>).GetTypeInfo();
+            var asyncAddTypeInfo = typeof(IAsyncAddPreprocessor<TEntity>).GetTypeInfo();
+            var asyncUpdateTypeInfo = typeof(IAsyncUpdatePreprocessor<TEntity>).GetTypeInfo();
+            var asyncDeleteTypeInfo = typeof(IAsyncDeletePreprocessor<TEntity>).GetTypeInfo();
 
             // Only add preprocessors to operators for which the given type implements the correct preprocessor interface.
             bool foundInterface = false;
@@ -213,6 +251,32 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 foundInterface = true;
             }
 
+            if (asyncGetTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
+            {
+                GetOperatorConfiguration.WithAsyncPreprocessing(serviceProvider => (IAsyncGetPreprocessor<TEntity, TGetInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
+            }
+            if (asyncQueryTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
+            {
+                QueryOperatorConfiguration.WithAsyncPreprocessing(serviceProvider => (IAsyncQueryPreprocessor<TEntity, TQueryInput>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
+            }
+            if (asyncAddTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
+            {
+                AddOperatorConfiguration.WithAsyncPreprocessing(serviceProvider => (IAsyncAddPreprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
+            }
+            if (asyncUpdateTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
+            {
+                UpdateOperatorConfiguration.WithAsyncPreprocessing(serviceProvider => (IAsyncUpdatePreprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
+            }
+            if (asyncDeleteTypeInfo.IsAssignableFrom(preprocessorTypeInfo))
+            {
+                DeleteOperatorConfiguration.WithAsyncPreprocessing(serviceProvider => (IAsyncDeletePreprocessor<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, preprocessorType));
+                foundInterface = true;
+            }
+
             // If the preprocessor does not implement one of the preprocessor interfaces, throw an exception.
             if (!foundInterface)
             {
@@ -233,6 +297,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             var addTypeInfo = typeof(IAddValidator<TEntity>).GetTypeInfo();
             var updateTypeInfo = typeof(IUpdateValidator<TEntity>).GetTypeInfo();
             var deleteTypeInfo = typeof(IDeleteValidator<TEntity>).GetTypeInfo();
+
             var asyncAddTypeInfo = typeof(IAsyncAddValidator<TEntity>).GetTypeInfo();
             var asyncUpdateTypeInfo = typeof(IAsyncUpdateValidator<TEntity>).GetTypeInfo();
             var asyncDeleteTypeInfo = typeof(IAsyncDeleteValidator<TEntity>).GetTypeInfo();
@@ -254,6 +319,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 DeleteOperatorConfiguration.WithValidation(serviceProvider => (IDeleteValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
                 foundInterface = true;
             }
+
             if (asyncAddTypeInfo.IsAssignableFrom(validatorTypeInfo))
             {
                 AddOperatorConfiguration.WithAsyncValidation(serviceProvider => (IAsyncAddValidator<TEntity>)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, validatorType));
