@@ -43,7 +43,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPostprocessor != null)
             {
-                await AsyncPostprocessor.PostprocessForUpdate(entity, input, ref result);
+                await AsyncPostprocessor.PostprocessForUpdate(entity, input, result);
             }
 
             return result;

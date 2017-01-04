@@ -45,7 +45,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPostprocessor != null)
             {
-                await AsyncPostprocessor.PostprocessForGet(input, ref result);
+                await AsyncPostprocessor.PostprocessForGet(input, result);
             }
 
             return result;

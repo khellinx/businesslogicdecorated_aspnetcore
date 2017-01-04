@@ -46,7 +46,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPostprocessor != null)
             {
-                await AsyncPostprocessor.PostprocessForQuery(input, ref result);
+                await AsyncPostprocessor.PostprocessForQuery(input, result);
             }
 
             return result;
@@ -62,7 +62,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             }
             if (AsyncPostprocessor != null)
             {
-                await AsyncPostprocessor.PostprocessForQuery(page, input, ref result);
+                await AsyncPostprocessor.PostprocessForQuery(page, input, result);
             }
 
             return result;
