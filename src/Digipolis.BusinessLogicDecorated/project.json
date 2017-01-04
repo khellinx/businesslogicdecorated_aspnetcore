@@ -1,5 +1,5 @@
 {
-	"version": "0.1.2-*",
+	"version": "0.1.3-*",
 	"description": "Add a business logic layer to your solution, decorated style so it's easy to extend and test!",
 	"authors": [ "Kelly Hellinx" ],
 	"packOptions": {
@@ -16,10 +16,10 @@
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
     "Microsoft.Extensions.Logging.Abstractions": "1.0.0"
   },
-	"frameworks": {
-        "netstandard1.6": {
-            "imports": "dnxcore50"
-        }
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
     }
+  }
 }
 
