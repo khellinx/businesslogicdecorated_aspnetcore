@@ -33,6 +33,16 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
         public async Task<IActionResult> Get(int id, [FromQuery]string fields)
         {
             var result = await OperatorCollection.GetAsync(id);
+
+            // Remove circular references (drawback of the internal memory provider of EF).
+            if (result?.Habitants != null)
+            {
+                foreach (var habitant in result.Habitants)
+                {
+                    habitant.Partner = null;
+                }
+            }
+
             return Ok(result);
         }
 

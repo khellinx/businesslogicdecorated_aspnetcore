@@ -17,8 +17,6 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
 
     public class AsyncAddOperator<TEntity, TInput> : Worker, IAsyncAddOperator<TEntity, TInput>
     {
-        private IUowProvider _uowProvider;
-
         public AsyncAddOperator(IUnitOfWorkScope uowScope) : base(uowScope)
         {
         }

@@ -69,12 +69,14 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
             var john = new Person()
             {
                 Name = "John",
-                Birthdate = new DateTime(1986, 5, 21)
+                Birthdate = new DateTime(1986, 5, 21),
+                Address = "Generaal Armstrongweg 1, 2020 Antwerpen",
             };
             var maria = new Person()
             {
                 Name = "Maria",
-                Birthdate = new DateTime(1983, 7, 14)
+                Birthdate = new DateTime(1983, 7, 14),
+                Address = "Generaal Armstrongweg 1, 2020 Antwerpen",
             };
             // John and Maria are a couple, how cute! :-)
             john.Partner = maria;
@@ -83,17 +85,20 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
             var peter = new Person()
             {
                 Name = "Peter",
-                Birthdate = new DateTime(1953, 1, 9)
+                Birthdate = new DateTime(1953, 1, 9),
+                Address = "Grote Markt 1, 2000 Antwerpen",
             };
             var chris = new Person()
             {
                 Name = "Chris",
-                Birthdate = new DateTime(1971, 3, 27)
+                Birthdate = new DateTime(1971, 3, 27),
+                Address = "Grote Markt 1, 2000 Antwerpen",
             };
             var ella = new Person()
             {
                 Name = "Ella",
-                Birthdate = new DateTime(1990, 11, 30)
+                Birthdate = new DateTime(1990, 11, 30),
+                Address = "Nationalestraat 101, 2000 Antwerpen",
             };
 
             context.People.Add(john);

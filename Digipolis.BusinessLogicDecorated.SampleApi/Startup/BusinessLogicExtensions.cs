@@ -3,6 +3,7 @@ using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
+using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Postprocessors;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Preprocessors;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Validators;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +29,8 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
 
             // Configure operators in one time for the Home entity
             operatorBuilder.ConfigureAsyncCrudOperators<Home>()
-                .WithValidation<HomeValidator>();
+                .WithValidation<HomeValidator>()
+                .WithPostprocessing<HomePostprocessor>();
 
             // Configure operators and their decorators separately for Person entity
             operatorBuilder.ConfigureAsyncGetOperator<Person, GetPersonInput>()
