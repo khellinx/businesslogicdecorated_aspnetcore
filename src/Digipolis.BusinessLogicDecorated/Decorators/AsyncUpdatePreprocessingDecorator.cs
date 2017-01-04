@@ -12,6 +12,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncUpdatePreprocessingDecorator(IAsyncUpdateOperator<TEntity, object> updateOperator, IUpdatePreprocessor<TEntity, object> preprocessor) : base(updateOperator, preprocessor)
         {
         }
+
+        public AsyncUpdatePreprocessingDecorator(IAsyncUpdateOperator<TEntity, object> updateOperator, IAsyncUpdatePreprocessor<TEntity, object> preprocessor) : base(updateOperator, preprocessor)
+        {
+        }
     }
 
     public class AsyncUpdatePreprocessingDecorator<TEntity, TInput> : AsyncUpdateDecorator<TEntity, TInput>
@@ -21,13 +25,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Preprocessor = preprocessor;
         }
 
-        public IUpdatePreprocessor<TEntity, TInput> Preprocessor { get; set; }
-
-        public override Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput))
+        public AsyncUpdatePreprocessingDecorator(IAsyncUpdateOperator<TEntity, TInput> updateOperator, IAsyncUpdatePreprocessor<TEntity, TInput> preprocessor) : base(updateOperator)
         {
-            Preprocessor.PreprocessForUpdate(ref entity, ref input);
+            AsyncPreprocessor = preprocessor;
+        }
 
-            return UpdateOperator.UpdateAsync(entity, input);
+        public IUpdatePreprocessor<TEntity, TInput> Preprocessor { get; set; }
+        public IAsyncUpdatePreprocessor<TEntity, TInput> AsyncPreprocessor { get; set; }
+
+        public override async Task<TEntity> UpdateAsync(TEntity entity, TInput input = default(TInput))
+        {
+            if (Preprocessor != null)
+            {
+                Preprocessor.PreprocessForUpdate(ref entity, ref input);
+            }
+            if (AsyncPreprocessor != null)
+            {
+                await AsyncPreprocessor.PreprocessForUpdate(ref entity, ref input);
+            }
+
+            return await UpdateOperator.UpdateAsync(entity, input);
         }
     }
 }
