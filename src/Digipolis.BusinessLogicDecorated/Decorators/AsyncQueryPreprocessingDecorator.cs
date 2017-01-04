@@ -14,6 +14,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncQueryPreprocessingDecorator(IAsyncQueryOperator<TEntity, QueryInput<TEntity>> queryOperator, IQueryPreprocessor<TEntity, QueryInput<TEntity>> preprocessor) : base(queryOperator, preprocessor)
         {
         }
+
+        public AsyncQueryPreprocessingDecorator(IAsyncQueryOperator<TEntity, QueryInput<TEntity>> queryOperator, IAsyncQueryPreprocessor<TEntity, QueryInput<TEntity>> preprocessor) : base(queryOperator, preprocessor)
+        {
+        }
     }
 
     public class AsyncQueryPreprocessingDecorator<TEntity, TInput> : AsyncQueryDecorator<TEntity, TInput>
@@ -24,20 +28,40 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Preprocessor = preprocessor;
         }
 
-        public IQueryPreprocessor<TEntity, TInput> Preprocessor { get; set; }
-
-        public override Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput))
+        public AsyncQueryPreprocessingDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator, IAsyncQueryPreprocessor<TEntity, TInput> preprocessor) : base(queryOperator)
         {
-            Preprocessor.PreprocessForQuery(ref input);
-
-            return QueryOperator.QueryAsync(input);
+            AsyncPreprocessor = preprocessor;
         }
 
-        public override Task<PagedCollection<TEntity>> QueryAsync(Page page, TInput input = null)
-        {
-            Preprocessor.PreprocessForQuery(ref page, ref input);
+        public IQueryPreprocessor<TEntity, TInput> Preprocessor { get; set; }
+        public IAsyncQueryPreprocessor<TEntity, TInput> AsyncPreprocessor { get; set; }
 
-            return QueryOperator.QueryAsync(page, input);
+        public override async Task<IEnumerable<TEntity>> QueryAsync(TInput input = default(TInput))
+        {
+            if (Preprocessor != null)
+            {
+                Preprocessor.PreprocessForQuery(ref input);
+            }
+            if (AsyncPreprocessor != null)
+            {
+                await AsyncPreprocessor.PreprocessForQuery(ref input);
+            }
+
+            return await QueryOperator.QueryAsync(input);
+        }
+
+        public override async Task<PagedCollection<TEntity>> QueryAsync(Page page, TInput input = null)
+        {
+            if (Preprocessor != null)
+            {
+                Preprocessor.PreprocessForQuery(ref page, ref input);
+            }
+            if (AsyncPreprocessor != null)
+            {
+                await AsyncPreprocessor.PreprocessForQuery(ref page, ref input);
+            }
+
+            return await QueryOperator.QueryAsync(page, input);
         }
     }
 }

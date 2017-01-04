@@ -12,6 +12,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncDeletePreprocessingDecorator(IAsyncDeleteOperator<TEntity, object> deleteOperator, IDeletePreprocessor<TEntity, object> preprocessor) : base(deleteOperator, preprocessor)
         {
         }
+
+        public AsyncDeletePreprocessingDecorator(IAsyncDeleteOperator<TEntity, object> deleteOperator, IAsyncDeletePreprocessor<TEntity, object> preprocessor) : base(deleteOperator, preprocessor)
+        {
+        }
     }
 
     public class AsyncDeletePreprocessingDecorator<TEntity, TInput> : AsyncDeleteDecorator<TEntity, TInput>
@@ -21,13 +25,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Preprocessor = preprocessor;
         }
 
-        public IDeletePreprocessor<TEntity, TInput> Preprocessor { get; set; }
-
-        public override Task DeleteAsync(int id, TInput input = default(TInput))
+        public AsyncDeletePreprocessingDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator, IAsyncDeletePreprocessor<TEntity, TInput> preprocessor) : base(deleteOperator)
         {
-            Preprocessor.PreprocessForDelete(id, ref input);
+            AsyncPreprocessor = preprocessor;
+        }
 
-            return DeleteOperator.DeleteAsync(id, input);
+        public IDeletePreprocessor<TEntity, TInput> Preprocessor { get; set; }
+        public IAsyncDeletePreprocessor<TEntity, TInput> AsyncPreprocessor { get; set; }
+
+        public override async Task DeleteAsync(int id, TInput input = default(TInput))
+        {
+            if (Preprocessor != null)
+            {
+                Preprocessor.PreprocessForDelete(id, ref input);
+            }
+            if (AsyncPreprocessor != null)
+            {
+                await AsyncPreprocessor.PreprocessForDelete(id, ref input);
+            }
+
+            await DeleteOperator.DeleteAsync(id, input);
         }
     }
 }

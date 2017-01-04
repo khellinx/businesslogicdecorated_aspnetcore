@@ -13,6 +13,10 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity> getOperator, IGetPreprocessor<TEntity> preprocessor) : base(getOperator, preprocessor)
         {
         }
+
+        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity> getOperator, IAsyncGetPreprocessor<TEntity> preprocessor) : base(getOperator, preprocessor)
+        {
+        }
     }
 
     public class AsyncGetPreprocessingDecorator<TEntity, TInput> : AsyncGetDecorator<TEntity, TInput>
@@ -23,13 +27,26 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             Preprocessor = preprocessor;
         }
 
-        public IGetPreprocessor<TEntity, TInput> Preprocessor { get; set; }
-
-        public override Task<TEntity> GetAsync(int id, TInput input = default(TInput))
+        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TInput> getOperator, IAsyncGetPreprocessor<TEntity, TInput> preprocessor) : base(getOperator)
         {
-            Preprocessor.PreprocessForGet(ref input);
+            AsyncPreprocessor = preprocessor;
+        }
 
-            return GetOperator.GetAsync(id, input);
+        public IGetPreprocessor<TEntity, TInput> Preprocessor { get; set; }
+        public IAsyncGetPreprocessor<TEntity, TInput> AsyncPreprocessor { get; set; }
+
+        public override async Task<TEntity> GetAsync(int id, TInput input = default(TInput))
+        {
+            if (Preprocessor != null)
+            {
+                Preprocessor.PreprocessForGet(ref input);
+            }
+            if (AsyncPreprocessor != null)
+            {
+                await AsyncPreprocessor.PreprocessForGet(ref input);
+            }
+
+            return await GetOperator.GetAsync(id, input);
         }
     }
 }

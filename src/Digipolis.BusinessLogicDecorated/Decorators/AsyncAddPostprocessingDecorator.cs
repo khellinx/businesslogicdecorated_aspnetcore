@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
-    public class AsyncAddPostprocessingDecorator
-    {
-    }
-
     public class AsyncAddPostprocessingDecorator<TEntity> : AsyncAddPostprocessingDecorator<TEntity, object>, IAsyncAddOperator<TEntity>
     {
         public AsyncAddPostprocessingDecorator(IAsyncAddOperator<TEntity, object> addOperator, IAddPostprocessor<TEntity, object> postprocessor) : base(addOperator, postprocessor)
