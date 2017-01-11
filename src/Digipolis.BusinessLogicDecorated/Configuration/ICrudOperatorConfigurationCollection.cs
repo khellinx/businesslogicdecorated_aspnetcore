@@ -24,6 +24,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
 
         ICrudOperatorCollection<TEntity, TGetInput, TQueryInput> Build(IServiceProvider serviceProvider);
 
+        ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithCustomOperator<TCustomOperator>();
         ICrudOperatorConfigurationCollection<TEntity, TGetInput, TQueryInput> WithPostprocessing<TPostprocessor>()
             where TPostprocessor : class;
 
