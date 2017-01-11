@@ -19,3 +19,7 @@
 - Added async preprocessor functionality.
 - Added async postprocessor functionality.
 - Better simple CRUD operator collection registration.
+
+### 0.1.4
+
+- Added WithCustomOperator to ICrudOperatorConfigurationCollection
