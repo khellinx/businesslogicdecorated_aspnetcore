@@ -25,7 +25,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Preprocessors
             PreprocessForQuery(ref input);
         }
 
-        public void PreprocessForGet(ref GetPersonInput input)
+        public void PreprocessForGet(ref int id, ref GetPersonInput input)
         {
             if (input == null) input = new GetPersonInput();
 

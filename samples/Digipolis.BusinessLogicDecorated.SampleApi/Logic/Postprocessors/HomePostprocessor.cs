@@ -16,7 +16,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Postprocessors
         {
         }
 
-        public async Task PostprocessForGet(GetInput<Home> input, Home result)
+        public async Task PostprocessForGet(int id, GetInput<Home> input, Home result)
         {
             if (string.IsNullOrWhiteSpace(result?.Address))
                 return;
