@@ -10,9 +10,14 @@ namespace Digipolis.BusinessLogicDecorated.Postprocessors
     {
     }
 
-    public interface IGetPostprocessor<TEntity, TInput>
+    public interface IGetPostprocessor<TEntity, TInput> : IGetPostprocessor<TEntity, int, TInput>
         where TInput : GetInput<TEntity>
     {
-        void PostprocessForGet(TInput input, ref TEntity result);
+    }
+
+    public interface IGetPostprocessor<TEntity, TId, TInput>
+        where TInput : GetInput<TEntity>
+    {
+        void PostprocessForGet(TId id, TInput input, ref TEntity result);
     }
 }

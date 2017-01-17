@@ -10,9 +10,14 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
     {
     }
 
-    public interface IGetPreprocessor<TEntity, TInput>
+    public interface IGetPreprocessor<TEntity, TInput> : IGetPreprocessor<TEntity, int, TInput>
         where TInput : GetInput<TEntity>
     {
-        void PreprocessForGet(ref TInput input);
+    }
+
+    public interface IGetPreprocessor<TEntity, TId, TInput>
+        where TInput : GetInput<TEntity>
+    {
+        void PreprocessForGet(TId id, ref TInput input);
     }
 }

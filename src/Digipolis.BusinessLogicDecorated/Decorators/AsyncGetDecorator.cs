@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
-    public abstract class AsyncGetDecorator<TEntity, TInput> : IAsyncGetOperator<TEntity, TInput>
+    public abstract class AsyncGetDecorator<TEntity, TId, TInput> : IAsyncGetOperator<TEntity, TId, TInput>
         where TInput : GetInput<TEntity>
     {
-        public AsyncGetDecorator(IAsyncGetOperator<TEntity, TInput> getOperator)
+        public AsyncGetDecorator(IAsyncGetOperator<TEntity, TId, TInput> getOperator)
         {
             if (getOperator == null)
             {
@@ -20,8 +20,8 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             GetOperator = getOperator;
         }
 
-        public IAsyncGetOperator<TEntity, TInput> GetOperator { get; private set; }
+        public IAsyncGetOperator<TEntity, TId, TInput> GetOperator { get; private set; }
 
-        public abstract Task<TEntity> GetAsync(int id, TInput input = default(TInput));
+        public abstract Task<TEntity> GetAsync(TId id, TInput input = default(TInput));
     }
 }

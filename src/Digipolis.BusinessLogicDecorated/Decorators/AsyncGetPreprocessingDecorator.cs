@@ -19,31 +19,43 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         }
     }
 
-    public class AsyncGetPreprocessingDecorator<TEntity, TInput> : AsyncGetDecorator<TEntity, TInput>
+    public class AsyncGetPreprocessingDecorator<TEntity, TInput> : AsyncGetPreprocessingDecorator<TEntity, int, TInput>, IAsyncGetOperator<TEntity, TInput>
         where TInput : GetInput<TEntity>
     {
-        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TInput> getOperator, IGetPreprocessor<TEntity, TInput> preprocessor) : base(getOperator)
+        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TInput> getOperator, IGetPreprocessor<TEntity, TInput> preprocessor) : base(getOperator, preprocessor)
+        {
+        }
+
+        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TInput> getOperator, IAsyncGetPreprocessor<TEntity, TInput> preprocessor) : base(getOperator, preprocessor)
+        {
+        }
+    }
+
+    public class AsyncGetPreprocessingDecorator<TEntity, TId, TInput> : AsyncGetDecorator<TEntity, TId, TInput>
+        where TInput : GetInput<TEntity>
+    {
+        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TId, TInput> getOperator, IGetPreprocessor<TEntity, TId, TInput> preprocessor) : base(getOperator)
         {
             Preprocessor = preprocessor;
         }
 
-        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TInput> getOperator, IAsyncGetPreprocessor<TEntity, TInput> preprocessor) : base(getOperator)
+        public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TId, TInput> getOperator, IAsyncGetPreprocessor<TEntity, TId, TInput> preprocessor) : base(getOperator)
         {
             AsyncPreprocessor = preprocessor;
         }
 
-        public IGetPreprocessor<TEntity, TInput> Preprocessor { get; set; }
-        public IAsyncGetPreprocessor<TEntity, TInput> AsyncPreprocessor { get; set; }
+        public IGetPreprocessor<TEntity, TId, TInput> Preprocessor { get; set; }
+        public IAsyncGetPreprocessor<TEntity, TId, TInput> AsyncPreprocessor { get; set; }
 
-        public override async Task<TEntity> GetAsync(int id, TInput input = default(TInput))
+        public override async Task<TEntity> GetAsync(TId id, TInput input = default(TInput))
         {
             if (Preprocessor != null)
             {
-                Preprocessor.PreprocessForGet(ref input);
+                Preprocessor.PreprocessForGet(id, ref input);
             }
             if (AsyncPreprocessor != null)
             {
-                await AsyncPreprocessor.PreprocessForGet(input);
+                await AsyncPreprocessor.PreprocessForGet(id, input);
             }
 
             return await GetOperator.GetAsync(id, input);

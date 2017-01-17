@@ -10,9 +10,14 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     {
     }
 
-    public interface IAsyncGetOperator<TEntity, TInput>
+    public interface IAsyncGetOperator<TEntity, TInput> : IAsyncGetOperator<TEntity, int, TInput>
         where TInput : GetInput<TEntity>
     {
-        Task<TEntity> GetAsync(int id, TInput input = default(TInput));
+    }
+
+    public interface IAsyncGetOperator<TEntity, TId, TInput>
+        where TInput : GetInput<TEntity>
+    {
+        Task<TEntity> GetAsync(TId id, TInput input = default(TInput));
     }
 }
