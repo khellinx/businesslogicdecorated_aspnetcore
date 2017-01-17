@@ -51,7 +51,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         {
             if (Preprocessor != null)
             {
-                Preprocessor.PreprocessForGet(id, ref input);
+                Preprocessor.PreprocessForGet(ref id, ref input);
             }
             if (AsyncPreprocessor != null)
             {

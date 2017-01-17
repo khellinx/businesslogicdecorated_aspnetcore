@@ -48,7 +48,7 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         {
             if (Preprocessor != null)
             {
-                Preprocessor.PreprocessForDelete(id, ref input);
+                Preprocessor.PreprocessForDelete(ref id, ref input);
             }
             if (AsyncPreprocessor != null)
             {

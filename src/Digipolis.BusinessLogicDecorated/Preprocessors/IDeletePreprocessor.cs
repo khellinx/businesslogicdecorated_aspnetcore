@@ -15,6 +15,6 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
 
     public interface IDeletePreprocessor<TEntity, TId, TInput>
     {
-        void PreprocessForDelete(TId id, ref TInput input);
+        void PreprocessForDelete(ref TId id, ref TInput input);
     }
 }
