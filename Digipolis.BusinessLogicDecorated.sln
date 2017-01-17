@@ -23,7 +23,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Digipolis.BusinessLogicDeco
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{46328C7F-CA9A-4261-9430-88597CA01BBF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Digipolis.BusinessLogicDecorated.SampleApi", "Digipolis.BusinessLogicDecorated.SampleApi\Digipolis.BusinessLogicDecorated.SampleApi.xproj", "{58C56D8A-1F7A-4198-8542-D63760A7CCA5}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Digipolis.BusinessLogicDecorated.SampleApi", "samples\Digipolis.BusinessLogicDecorated.SampleApi\Digipolis.BusinessLogicDecorated.SampleApi.xproj", "{58C56D8A-1F7A-4198-8542-D63760A7CCA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
