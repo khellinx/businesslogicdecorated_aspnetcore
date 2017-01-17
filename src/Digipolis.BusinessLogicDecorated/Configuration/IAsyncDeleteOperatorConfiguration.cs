@@ -70,4 +70,35 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithAsyncValidation<TValidator>()
             where TValidator : class, IAsyncDeleteValidator<TEntity, TInput>;
     }
+
+    public interface IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> : IOperatorConfiguration<IAsyncDeleteOperator<TEntity, TId, TInput>>
+    {
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TId, TInput>> preprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncDeleteOperator<TEntity, TId, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithPostprocessing(Func<IServiceProvider, IDeletePostprocessor<TEntity, TId, TInput>> postprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IDeletePostprocessor<TEntity, TId, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithAsyncPostprocessing(Func<IServiceProvider, IAsyncDeletePostprocessor<TEntity, TId, TInput>> postprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithAsyncPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IAsyncDeletePostprocessor<TEntity, TId, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithPreprocessing(Func<IServiceProvider, IDeletePreprocessor<TEntity, TId, TInput>> preprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IDeletePreprocessor<TEntity, TId, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithAsyncPreprocessing(Func<IServiceProvider, IAsyncDeletePreprocessor<TEntity, TId, TInput>> preprocessorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithAsyncPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IAsyncDeletePreprocessor<TEntity, TId, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithValidation(Func<IServiceProvider, IDeleteValidator<TEntity, TId, TInput>> validatorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithValidation<TValidator>()
+            where TValidator : class, IDeleteValidator<TEntity, TId, TInput>;
+
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithAsyncValidation(Func<IServiceProvider, IAsyncDeleteValidator<TEntity, TId, TInput>> validatorFactory = null);
+        IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithAsyncValidation<TValidator>()
+            where TValidator : class, IAsyncDeleteValidator<TEntity, TId, TInput>;
+    }
 }
