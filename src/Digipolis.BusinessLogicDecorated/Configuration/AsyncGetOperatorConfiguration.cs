@@ -191,4 +191,95 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return this;
         }
     }
+
+    public class AsyncGetOperatorConfiguration<TEntity, TId, TInput> : OperatorConfiguration<IAsyncGetOperator<TEntity, TId, TInput>>, IAsyncGetOperatorConfiguration<TEntity, TId, TInput>
+        where TInput : GetInput<TEntity>
+    {
+        public AsyncGetOperatorConfiguration(Func<IServiceProvider, IAsyncGetOperator<TEntity, TId, TInput>> operatorFactory) : base(operatorFactory)
+        {
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity, TId, TInput>> operatorFactory = null)
+        {
+            if (operatorFactory == null)
+            {
+                throw new ArgumentNullException(nameof(operatorFactory));
+            }
+
+            OperatorFactory = operatorFactory;
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncGetOperator<TEntity, TId, TInput>
+        {
+            OperatorFactory = serviceProvider =>
+            {
+                return ActivatorUtilities.GetServiceOrCreateInstance<TCustomOperator>(serviceProvider);
+            };
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity, TId, TInput>> postprocessorFactory = null)
+        {
+            AppendDecorator((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TId, TInput>(op, dep), postprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IGetPostprocessor<TEntity, TId, TInput>
+        {
+            AppendDecorator<TPostprocessor>((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TId, TInput>(op, dep));
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPostprocessing(Func<IServiceProvider, IAsyncGetPostprocessor<TEntity, TId, TInput>> postprocessorFactory = null)
+        {
+            AppendDecorator((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TId, TInput>(op, dep), postprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IAsyncGetPostprocessor<TEntity, TId, TInput>
+        {
+            AppendDecorator<TPostprocessor>((op, dep) => new AsyncGetPostprocessingDecorator<TEntity, TId, TInput>(op, dep));
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPreprocessing(Func<IServiceProvider, IGetPreprocessor<TEntity, TId, TInput>> preprocessorFactory = null)
+        {
+            InsertDecorator((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TId, TInput>(op, dep), preprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IGetPreprocessor<TEntity, TId, TInput>
+        {
+            InsertDecorator<TPreprocessor>((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TId, TInput>(op, dep));
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPreprocessing(Func<IServiceProvider, IAsyncGetPreprocessor<TEntity, TId, TInput>> preprocessorFactory = null)
+        {
+            InsertDecorator((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TId, TInput>(op, dep), preprocessorFactory);
+
+            return this;
+        }
+
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IAsyncGetPreprocessor<TEntity, TId, TInput>
+        {
+            InsertDecorator<TPreprocessor>((op, dep) => new AsyncGetPreprocessingDecorator<TEntity, TId, TInput>(op, dep));
+
+            return this;
+        }
+    }
 }

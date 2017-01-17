@@ -55,4 +55,28 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         IAsyncGetOperatorConfiguration<TEntity, TInput> WithAsyncPreprocessing<TPreprocessor>()
             where TPreprocessor : class, IAsyncGetPreprocessor<TEntity, TInput>;
     }
+
+    public interface IAsyncGetOperatorConfiguration<TEntity, TId, TInput> : IOperatorConfiguration<IAsyncGetOperator<TEntity, TId, TInput>>
+        where TInput : GetInput<TEntity>
+    {
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity, TId, TInput>> preprocessorFactory = null);
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator<TCustomOperator>()
+            where TCustomOperator : class, IAsyncGetOperator<TEntity, TId, TInput>;
+
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPostprocessing(Func<IServiceProvider, IGetPostprocessor<TEntity, TId, TInput>> postprocessorFactory = null);
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IGetPostprocessor<TEntity, TId, TInput>;
+
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPostprocessing(Func<IServiceProvider, IAsyncGetPostprocessor<TEntity, TId, TInput>> postprocessorFactory = null);
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPostprocessing<TPostprocessor>()
+            where TPostprocessor : class, IAsyncGetPostprocessor<TEntity, TId, TInput>;
+
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPreprocessing(Func<IServiceProvider, IGetPreprocessor<TEntity, TId, TInput>> preprocessorFactory = null);
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IGetPreprocessor<TEntity, TId, TInput>;
+
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPreprocessing(Func<IServiceProvider, IAsyncGetPreprocessor<TEntity, TId, TInput>> preprocessorFactory = null);
+        IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithAsyncPreprocessing<TPreprocessor>()
+            where TPreprocessor : class, IAsyncGetPreprocessor<TEntity, TId, TInput>;
+    }
 }
