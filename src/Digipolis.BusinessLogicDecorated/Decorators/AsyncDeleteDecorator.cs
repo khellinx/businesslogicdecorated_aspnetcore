@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
-    public abstract class AsyncDeleteDecorator<TEntity, TInput> : IAsyncDeleteOperator<TEntity, TInput>
+    public abstract class AsyncDeleteDecorator<TEntity, TId, TInput> : IAsyncDeleteOperator<TEntity, TId, TInput>
     {
-        public AsyncDeleteDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator)
+        public AsyncDeleteDecorator(IAsyncDeleteOperator<TEntity, TId, TInput> deleteOperator)
         {
             if (deleteOperator == null)
             {
@@ -18,8 +18,8 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
             DeleteOperator = deleteOperator;
         }
 
-        public IAsyncDeleteOperator<TEntity, TInput> DeleteOperator { get; private set; }
+        public IAsyncDeleteOperator<TEntity, TId, TInput> DeleteOperator { get; private set; }
 
-        public abstract Task DeleteAsync(int id, TInput input = default(TInput));
+        public abstract Task DeleteAsync(TId id, TInput input = default(TInput));
     }
 }

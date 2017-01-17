@@ -9,8 +9,12 @@ namespace Digipolis.BusinessLogicDecorated.Validators
     {
     }
 
-    public interface IDeleteValidator<TEntity, TInput>
+    public interface IDeleteValidator<TEntity, TInput> : IDeleteValidator<TEntity, int, TInput>
     {
-        void ValidateForDelete(int id, TInput input = default(TInput));
+    }
+
+    public interface IDeleteValidator<TEntity, TId, TInput>
+    {
+        void ValidateForDelete(TId id, TInput input = default(TInput));
     }
 }

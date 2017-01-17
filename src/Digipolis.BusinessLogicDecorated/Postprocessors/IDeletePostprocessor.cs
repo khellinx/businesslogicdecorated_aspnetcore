@@ -9,8 +9,12 @@ namespace Digipolis.BusinessLogicDecorated.Postprocessors
     {
     }
 
-    public interface IDeletePostprocessor<TEntity, TInput>
+    public interface IDeletePostprocessor<TEntity, TInput> : IDeletePostprocessor<TEntity, int, TInput>
     {
-        void PostprocessForDelete(int id, TInput input);
+    }
+
+    public interface IDeletePostprocessor<TEntity, TId, TInput>
+    {
+        void PostprocessForDelete(TId id, TInput input);
     }
 }

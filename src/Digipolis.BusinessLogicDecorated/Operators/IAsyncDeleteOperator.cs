@@ -9,8 +9,12 @@ namespace Digipolis.BusinessLogicDecorated.Operators
     {
     }
 
-    public interface IAsyncDeleteOperator<TEntity, TInput>
+    public interface IAsyncDeleteOperator<TEntity, TInput> : IAsyncDeleteOperator<TEntity, int, TInput>
     {
-        Task DeleteAsync(int id, TInput input = default(TInput));
+    }
+
+    public interface IAsyncDeleteOperator<TEntity, TId, TInput>
+    {
+        Task DeleteAsync(TId id, TInput input = default(TInput));
     }
 }

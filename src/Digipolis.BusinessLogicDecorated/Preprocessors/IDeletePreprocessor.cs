@@ -9,8 +9,12 @@ namespace Digipolis.BusinessLogicDecorated.Preprocessors
     {
     }
 
-    public interface IDeletePreprocessor<TEntity, TInput>
+    public interface IDeletePreprocessor<TEntity, TInput> : IDeletePreprocessor<TEntity, int, TInput>
     {
-        void PreprocessForDelete(int id, ref TInput input);
+    }
+
+    public interface IDeletePreprocessor<TEntity, TId, TInput>
+    {
+        void PreprocessForDelete(TId id, ref TInput input);
     }
 }

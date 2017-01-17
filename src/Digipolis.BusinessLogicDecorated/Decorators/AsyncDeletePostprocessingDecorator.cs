@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.Decorators
 {
-    public class AsyncDeletePostprocessingDecorator
-    {
-    }
-
     public class AsyncDeletePostprocessingDecorator<TEntity> : AsyncDeletePostprocessingDecorator<TEntity, object>, IAsyncDeleteOperator<TEntity>
     {
         public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, object> deleteOperator, IDeletePostprocessor<TEntity, object> postprocessor) : base(deleteOperator, postprocessor)
@@ -22,22 +18,33 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
         }
     }
 
-    public class AsyncDeletePostprocessingDecorator<TEntity, TInput> : AsyncDeleteDecorator<TEntity, TInput>
+    public class AsyncDeletePostprocessingDecorator<TEntity, TInput> : AsyncDeletePostprocessingDecorator<TEntity, int, TInput>, IAsyncDeleteOperator<TEntity, TInput>
     {
-        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator, IDeletePostprocessor<TEntity, TInput> postprocessor) : base(deleteOperator)
+        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator, IDeletePostprocessor<TEntity, TInput> postprocessor) : base(deleteOperator, postprocessor)
+        {
+        }
+
+        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator, IAsyncDeletePostprocessor<TEntity, TInput> postprocessor) : base(deleteOperator, postprocessor)
+        {
+        }
+    }
+
+    public class AsyncDeletePostprocessingDecorator<TEntity, TId, TInput> : AsyncDeleteDecorator<TEntity, TId, TInput>
+    {
+        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TId, TInput> deleteOperator, IDeletePostprocessor<TEntity, TId, TInput> postprocessor) : base(deleteOperator)
         {
             Postprocessor = postprocessor;
         }
 
-        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TInput> deleteOperator, IAsyncDeletePostprocessor<TEntity, TInput> postprocessor) : base(deleteOperator)
+        public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TId, TInput> deleteOperator, IAsyncDeletePostprocessor<TEntity, TId, TInput> postprocessor) : base(deleteOperator)
         {
             AsyncPostprocessor = postprocessor;
         }
 
-        public IDeletePostprocessor<TEntity, TInput> Postprocessor { get; set; }
-        public IAsyncDeletePostprocessor<TEntity, TInput> AsyncPostprocessor { get; set; }
+        public IDeletePostprocessor<TEntity, TId, TInput> Postprocessor { get; set; }
+        public IAsyncDeletePostprocessor<TEntity, TId, TInput> AsyncPostprocessor { get; set; }
 
-        public override async Task DeleteAsync(int id, TInput input = default(TInput))
+        public override async Task DeleteAsync(TId id, TInput input = default(TInput))
         {
             await DeleteOperator.DeleteAsync(id, input);
 

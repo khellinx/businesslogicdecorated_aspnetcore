@@ -9,8 +9,12 @@ namespace Digipolis.BusinessLogicDecorated.Validators
     {
     }
 
-    public interface IAsyncDeleteValidator<TEntity, TInput>
+    public interface IAsyncDeleteValidator<TEntity, TInput> : IAsyncDeleteValidator<TEntity, int, TInput>
     {
-        Task ValidateForDelete(int id, TInput input = default(TInput));
+    }
+
+    public interface IAsyncDeleteValidator<TEntity, TId, TInput>
+    {
+        Task ValidateForDelete(TId id, TInput input = default(TInput));
     }
 }
