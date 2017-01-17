@@ -179,6 +179,18 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return result;
         }
 
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> ConfigureAsyncGetOperator<TEntity, TId, TInput>(Func<IServiceProvider, IAsyncGetOperator<TEntity, TId, TInput>> operatorFactory = null)
+            where TInput : GetInput<TEntity>
+        {
+            operatorFactory = GetOperatorFactory<TEntity, TId, TInput, IAsyncGetOperator<TEntity, TId, TInput>>(operatorFactory, _defaultAsyncGetOperatorTypeWithCustomInput);
+
+            var result = new AsyncGetOperatorConfiguration<TEntity, TId, TInput>(operatorFactory);
+
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncGetOperator<TEntity, TId, TInput>), result.Build, _serviceLifetime));
+
+            return result;
+        }
+
         public IAsyncQueryOperatorConfiguration<TEntity> ConfigureAsyncQueryOperator<TEntity>(Func<IServiceProvider, IAsyncQueryOperator<TEntity>> operatorFactory = null)
         {
             operatorFactory = GetOperatorFactory<TEntity, IAsyncQueryOperator<TEntity>>(operatorFactory, _defaultAsyncQueryOperatorType);
@@ -268,6 +280,17 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             return result;
         }
 
+        public IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> ConfigureAsyncDeleteOperator<TEntity, TId, TInput>(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TId, TInput>> operatorFactory = null)
+        {
+            operatorFactory = GetOperatorFactory<TEntity, TId, TInput, IAsyncDeleteOperator<TEntity, TId, TInput>>(operatorFactory, _defaultAsyncDeleteOperatorTypeWithCustomInput);
+
+            var result = new AsyncDeleteOperatorConfiguration<TEntity, TId, TInput>(operatorFactory);
+
+            _operatorServiceDescriptors.Add(new ServiceDescriptor(typeof(IAsyncDeleteOperator<TEntity, TId, TInput>), result.Build, _serviceLifetime));
+
+            return result;
+        }
+
         private Func<IServiceProvider, TOperator> GetOperatorFactory<TEntity, TOperator>(Func<IServiceProvider, TOperator> operatorFactory, Type defaultType)
             where TOperator : class
         {
@@ -301,6 +324,26 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
                 operatorFactory = serviceProvider =>
                 {
                     var result = ActivatorUtilities.CreateInstance(serviceProvider, defaultType.GetGenericTypeDefinition().MakeGenericType(typeof(TEntity), typeof(TInput)));
+                    return result as TOperator;
+                };
+            }
+
+            return operatorFactory;
+        }
+
+        private Func<IServiceProvider, TOperator> GetOperatorFactory<TEntity, TId, TInput, TOperator>(Func<IServiceProvider, TOperator> operatorFactory, Type defaultType)
+            where TOperator : class
+        {
+            if (operatorFactory == null && defaultType == null)
+            {
+                throw new ArgumentNullException(nameof(operatorFactory), "When the default type is not set, the operator factory is required.");
+            }
+
+            if (operatorFactory == null)
+            {
+                operatorFactory = serviceProvider =>
+                {
+                    var result = ActivatorUtilities.CreateInstance(serviceProvider, defaultType.GetGenericTypeDefinition().MakeGenericType(typeof(TEntity), typeof(TId), typeof(TInput)));
                     return result as TOperator;
                 };
             }
