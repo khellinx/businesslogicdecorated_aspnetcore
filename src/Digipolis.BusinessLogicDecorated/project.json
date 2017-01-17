@@ -1,5 +1,5 @@
 {
-	"version": "0.1.4-*",
+	"version": "0.1.5-*",
 	"description": "Add a business logic layer to your solution, decorated style so it's easy to extend and test!",
 	"authors": [ "Kelly Hellinx" ],
 	"packOptions": {

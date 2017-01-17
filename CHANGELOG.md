@@ -23,3 +23,10 @@
 ### 0.1.4
 
 - Added WithCustomOperator to ICrudOperatorConfigurationCollection
+
+### 0.1.5
+
+- Added Get operators and decorators with generic id.
+- Added Delete operators and decorators with generic id.
+- Added id parameter to get and delete pre- and postprocessors.
+- Moved the SampleApi project to the samples directory.
