@@ -65,8 +65,10 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Controllers
 
         // DELETE api/people/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete([FromServices] IAsyncDeleteOperator<Person, int?, object> op, int id)
         {
+            await op.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

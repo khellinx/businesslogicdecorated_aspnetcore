@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Validators
 {
-    public class PersonValidator : IAddValidator<Person>, IUpdateValidator<Person>, IDeleteValidator<Person>
+    public class PersonValidator : IAddValidator<Person>, IUpdateValidator<Person>, IDeleteValidator<Person, int?, object>
     {
         public void ValidateForAdd(Person entity, object input = null)
         {
@@ -27,7 +27,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Validators
                 throw new ArgumentNullException(nameof(entity.Name));
         }
 
-        public void ValidateForDelete(int id, object input = null)
+        public void ValidateForDelete(int? id, object input = null)
         {
         }
     }

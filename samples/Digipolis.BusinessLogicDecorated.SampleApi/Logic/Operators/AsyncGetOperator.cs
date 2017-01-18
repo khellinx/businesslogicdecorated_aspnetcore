@@ -7,7 +7,7 @@ using Digipolis.BusinessLogicDecorated.Inputs;
 using Digipolis.DataAccess;
 using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 
-namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
+namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Operators
 {
     public class AsyncGetOperator<TEntity> : AsyncGetOperator<TEntity, GetInput<TEntity>>, IAsyncGetOperator<TEntity>
     {

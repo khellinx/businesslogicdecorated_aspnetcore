@@ -1,8 +1,8 @@
 ﻿using Digipolis.BusinessLogicDecorated.Configuration;
-using Digipolis.BusinessLogicDecorated.Inputs;
+using Digipolis.BusinessLogicDecorated.SampleApi.DataAccess;
 using Digipolis.BusinessLogicDecorated.SampleApi.Entities;
-using Digipolis.BusinessLogicDecorated.SampleApi.Logic;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Inputs;
+using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Operators;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Postprocessors;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Preprocessors;
 using Digipolis.BusinessLogicDecorated.SampleApi.Logic.Validators;
@@ -41,7 +41,7 @@ namespace Digipolis.BusinessLogicDecorated.SampleApi.Startup
                 .WithValidation<PersonValidator>();
             operatorBuilder.ConfigureAsyncUpdateOperator<Person>()
                 .WithValidation<PersonValidator>();
-            operatorBuilder.ConfigureAsyncDeleteOperator<Person>()
+            operatorBuilder.ConfigureAsyncDeleteOperator<Person, int?, object>(serviceProvider => new AsyncPersonDeleteOperator(serviceProvider.GetRequiredService<IUnitOfWorkScope>()))
                 .WithValidation<PersonValidator>();
 
             // Add all configured operators to the servicecollection

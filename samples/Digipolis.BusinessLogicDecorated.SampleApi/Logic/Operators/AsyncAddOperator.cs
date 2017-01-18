@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic
+namespace Digipolis.BusinessLogicDecorated.SampleApi.Logic.Operators
 {
     public class AsyncAddOperator<TEntity> : AsyncAddOperator<TEntity, object>, IAsyncAddOperator<TEntity>
     {
