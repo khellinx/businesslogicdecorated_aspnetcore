@@ -30,3 +30,8 @@
 - Added Delete operators and decorators with generic id.
 - Added id parameter to get and delete pre- and postprocessors.
 - Moved the SampleApi project to the samples directory.
+
+### 0.1.6
+
+- Add generic Id type functionality to OperatorBuilder.
+- Updated Sample api to use a delete operator with a generic id type.
