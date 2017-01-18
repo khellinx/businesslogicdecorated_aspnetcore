@@ -14,6 +14,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
     {
         private Type _defaultAsyncGetOperatorType;
         private Type _defaultAsyncGetOperatorTypeWithCustomInput;
+        private Type _defaultAsyncGetOperatorTypeWithCustomInputAndId;
         private Type _defaultAsyncQueryOperatorType;
         private Type _defaultAsyncQueryOperatorTypeWithCustomInput;
         private Type _defaultAsyncAddOperatorType;
@@ -22,6 +23,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         private Type _defaultAsyncUpdateOperatorTypeWithCustomInput;
         private Type _defaultAsyncDeleteOperatorType;
         private Type _defaultAsyncDeleteOperatorTypeWithCustomInput;
+        private Type _defaultAsyncDeleteOperatorTypeWithCustomInputAndId;
 
         private IList<ServiceDescriptor> _operatorServiceDescriptors;
         private IList<ServiceDescriptor> _crudOperatorCollectionServiceDescriptors;
@@ -34,50 +36,48 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
             _serviceLifetime = lifetime;
         }
 
-        public void SetDefaultAsyncGetOperatorTypes(Type asyncGetOperatorType = null, Type asyncGetOperatorTypeWithCustomInput = null)
+        public void SetDefaultAsyncGetOperatorTypes(Type asyncGetOperatorType = null, Type asyncGetOperatorTypeWithCustomInput = null, Type asyncGetOperatorTypeWithCustomInputAndId = null)
         {
-            SetDefaultTypes(typeof(IAsyncGetOperator<>), typeof(IAsyncGetOperator<,>), asyncGetOperatorType, asyncGetOperatorTypeWithCustomInput, ref _defaultAsyncGetOperatorType, ref _defaultAsyncGetOperatorTypeWithCustomInput);
+            SetDefaultType(typeof(IAsyncGetOperator<>), asyncGetOperatorType, ref _defaultAsyncGetOperatorType);
+            SetDefaultType(typeof(IAsyncGetOperator<,>), asyncGetOperatorTypeWithCustomInput, ref _defaultAsyncGetOperatorTypeWithCustomInput);
+            SetDefaultType(typeof(IAsyncGetOperator<,,>), asyncGetOperatorTypeWithCustomInputAndId, ref _defaultAsyncGetOperatorTypeWithCustomInputAndId);
         }
 
         public void SetDefaultAsyncQueryOperatorTypes(Type asyncQueryOperatorType = null, Type asyncQueryOperatorTypeWithCustomInput = null)
         {
-            SetDefaultTypes(typeof(IAsyncQueryOperator<>), typeof(IAsyncQueryOperator<,>), asyncQueryOperatorType, asyncQueryOperatorTypeWithCustomInput, ref _defaultAsyncQueryOperatorType, ref _defaultAsyncQueryOperatorTypeWithCustomInput);
+            SetDefaultType(typeof(IAsyncQueryOperator<>), asyncQueryOperatorType, ref _defaultAsyncQueryOperatorType);
+            SetDefaultType(typeof(IAsyncQueryOperator<,>), asyncQueryOperatorTypeWithCustomInput, ref _defaultAsyncQueryOperatorTypeWithCustomInput);
         }
 
         public void SetDefaultAsyncAddOperatorTypes(Type asyncAddOperatorType = null, Type asyncAddOperatorTypeWithCustomInput = null)
         {
-            SetDefaultTypes(typeof(IAsyncAddOperator<>), typeof(IAsyncAddOperator<,>), asyncAddOperatorType, asyncAddOperatorTypeWithCustomInput, ref _defaultAsyncAddOperatorType, ref _defaultAsyncAddOperatorTypeWithCustomInput);
+            SetDefaultType(typeof(IAsyncAddOperator<>), asyncAddOperatorType, ref _defaultAsyncAddOperatorType);
+            SetDefaultType(typeof(IAsyncAddOperator<,>), asyncAddOperatorTypeWithCustomInput, ref _defaultAsyncAddOperatorTypeWithCustomInput);
         }
 
         public void SetDefaultAsyncUpdateOperatorTypes(Type asyncUpdateOperatorType = null, Type asyncUpdateOperatorTypeWithCustomInput = null)
         {
-            SetDefaultTypes(typeof(IAsyncUpdateOperator<>), typeof(IAsyncUpdateOperator<,>), asyncUpdateOperatorType, asyncUpdateOperatorTypeWithCustomInput, ref _defaultAsyncUpdateOperatorType, ref _defaultAsyncUpdateOperatorTypeWithCustomInput);
+            SetDefaultType(typeof(IAsyncUpdateOperator<>), asyncUpdateOperatorType, ref _defaultAsyncUpdateOperatorType);
+            SetDefaultType(typeof(IAsyncUpdateOperator<,>), asyncUpdateOperatorTypeWithCustomInput, ref _defaultAsyncUpdateOperatorTypeWithCustomInput);
         }
 
-        public void SetDefaultAsyncDeleteOperatorTypes(Type asyncDeleteOperatorType = null, Type asyncDeleteOperatorTypeWithCustomInput = null)
+        public void SetDefaultAsyncDeleteOperatorTypes(Type asyncDeleteOperatorType = null, Type asyncDeleteOperatorTypeWithCustomInput = null, Type asyncDeleteOperatorTypeWithCustomInputAndId = null)
         {
-            SetDefaultTypes(typeof(IAsyncDeleteOperator<>), typeof(IAsyncDeleteOperator<,>), asyncDeleteOperatorType, asyncDeleteOperatorTypeWithCustomInput, ref _defaultAsyncDeleteOperatorType, ref _defaultAsyncDeleteOperatorTypeWithCustomInput);
+            SetDefaultType(typeof(IAsyncDeleteOperator<>), asyncDeleteOperatorType, ref _defaultAsyncDeleteOperatorType);
+            SetDefaultType(typeof(IAsyncDeleteOperator<,>), asyncDeleteOperatorTypeWithCustomInput, ref _defaultAsyncDeleteOperatorTypeWithCustomInput);
+            SetDefaultType(typeof(IAsyncDeleteOperator<,,>), asyncDeleteOperatorTypeWithCustomInputAndId, ref _defaultAsyncDeleteOperatorTypeWithCustomInputAndId);
         }
 
-        private void SetDefaultTypes(Type interfaceType, Type interfaceTypeWithCustomInput, Type operatorType, Type operatorTypeWithCustomInput, ref Type defaultType, ref Type defaultTypeWithCustomInput)
+        private void SetDefaultType(Type interfaceType, Type operatorType, ref Type defaultType)
         {
             if (operatorType != null && !operatorType.IsAssignableToGenericType(interfaceType))
             {
                 throw new ArgumentException($"The specified type does not implement interface {interfaceType.Name}.");
             }
 
-            if (operatorTypeWithCustomInput != null && !operatorTypeWithCustomInput.IsAssignableToGenericType(interfaceTypeWithCustomInput))
-            {
-                throw new ArgumentException($"The specified type does not implement interface {interfaceTypeWithCustomInput.Name}.");
-            }
-
             if (operatorType != null)
             {
                 defaultType = operatorType;
-            }
-            if (operatorTypeWithCustomInput != null)
-            {
-                defaultTypeWithCustomInput = operatorTypeWithCustomInput;
             }
         }
 
