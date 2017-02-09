@@ -77,6 +77,11 @@ To add the toolbox to a project, you add the package to the project.json:
  }
 ```
 
+For now, include the following package source:
+``` xml
+<add key="myget digipolisantwerp sl" value="https://www.myget.org/F/digipolisantwerp-sl/api/v3/index.json" />
+```
+
 In Visual Studio you can also use the NuGet Package Manager to do this.
 
 ## Minimal usage
