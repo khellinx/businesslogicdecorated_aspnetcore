@@ -36,11 +36,21 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     {
         public AsyncGetPostprocessingDecorator(IAsyncGetOperator<TEntity, TId, TInput> getOperator, IGetPostprocessor<TEntity, TId, TInput> postprocessor) : base(getOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             Postprocessor = postprocessor;
         }
 
         public AsyncGetPostprocessingDecorator(IAsyncGetOperator<TEntity, TId, TInput> getOperator, IAsyncGetPostprocessor<TEntity, TId, TInput> postprocessor) : base(getOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             AsyncPostprocessor = postprocessor;
         }
 

@@ -36,11 +36,21 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     {
         public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TId, TInput> getOperator, IGetPreprocessor<TEntity, TId, TInput> preprocessor) : base(getOperator)
         {
+            if (preprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(preprocessor));
+            }
+
             Preprocessor = preprocessor;
         }
 
         public AsyncGetPreprocessingDecorator(IAsyncGetOperator<TEntity, TId, TInput> getOperator, IAsyncGetPreprocessor<TEntity, TId, TInput> preprocessor) : base(getOperator)
         {
+            if (preprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(preprocessor));
+            }
+
             AsyncPreprocessor = preprocessor;
         }
 
