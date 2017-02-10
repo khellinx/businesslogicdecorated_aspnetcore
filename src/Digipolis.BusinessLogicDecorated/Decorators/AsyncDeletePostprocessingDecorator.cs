@@ -33,11 +33,21 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     {
         public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TId, TInput> deleteOperator, IDeletePostprocessor<TEntity, TId, TInput> postprocessor) : base(deleteOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             Postprocessor = postprocessor;
         }
 
         public AsyncDeletePostprocessingDecorator(IAsyncDeleteOperator<TEntity, TId, TInput> deleteOperator, IAsyncDeletePostprocessor<TEntity, TId, TInput> postprocessor) : base(deleteOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             AsyncPostprocessor = postprocessor;
         }
 
