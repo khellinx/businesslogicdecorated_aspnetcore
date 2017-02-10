@@ -14,26 +14,26 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
 {
     public class AsyncAddPostprocessingDecoratorTests
     {
-        private LazyMock<IAsyncAddOperator<Person, CustomWriteInput>> _operatorLazyMock = new LazyMock<IAsyncAddOperator<Person, CustomWriteInput>>();
-        private Mock<IAsyncAddOperator<Person, CustomWriteInput>> OperatorMock => _operatorLazyMock.Mock;
-        private IAsyncAddOperator<Person, CustomWriteInput> Operator => _operatorLazyMock.Object;
+        private LazyMock<IAsyncAddOperator<Person, PersonWriteInput>> _operatorLazyMock = new LazyMock<IAsyncAddOperator<Person, PersonWriteInput>>();
+        private Mock<IAsyncAddOperator<Person, PersonWriteInput>> OperatorMock => _operatorLazyMock.Mock;
+        private IAsyncAddOperator<Person, PersonWriteInput> Operator => _operatorLazyMock.Object;
 
-        private LazyMock<IAddPostprocessor<Person, CustomWriteInput>> _postprocessorLazyMock = new LazyMock<IAddPostprocessor<Person, CustomWriteInput>>();
-        private Mock<IAddPostprocessor<Person, CustomWriteInput>> PostprocessorMock => _postprocessorLazyMock.Mock;
-        private IAddPostprocessor<Person, CustomWriteInput> Postprocessor => _postprocessorLazyMock.Object;
+        private LazyMock<IAddPostprocessor<Person, PersonWriteInput>> _postprocessorLazyMock = new LazyMock<IAddPostprocessor<Person, PersonWriteInput>>();
+        private Mock<IAddPostprocessor<Person, PersonWriteInput>> PostprocessorMock => _postprocessorLazyMock.Mock;
+        private IAddPostprocessor<Person, PersonWriteInput> Postprocessor => _postprocessorLazyMock.Object;
 
-        private LazyMock<IAsyncAddPostprocessor<Person, CustomWriteInput>> _asyncPostprocessorLazyMock = new LazyMock<IAsyncAddPostprocessor<Person, CustomWriteInput>>();
-        private Mock<IAsyncAddPostprocessor<Person, CustomWriteInput>> AsyncPostprocessorMock => _asyncPostprocessorLazyMock.Mock;
-        private IAsyncAddPostprocessor<Person, CustomWriteInput> AsyncPostprocessor => _asyncPostprocessorLazyMock.Object;
+        private LazyMock<IAsyncAddPostprocessor<Person, PersonWriteInput>> _asyncPostprocessorLazyMock = new LazyMock<IAsyncAddPostprocessor<Person, PersonWriteInput>>();
+        private Mock<IAsyncAddPostprocessor<Person, PersonWriteInput>> AsyncPostprocessorMock => _asyncPostprocessorLazyMock.Mock;
+        private IAsyncAddPostprocessor<Person, PersonWriteInput> AsyncPostprocessor => _asyncPostprocessorLazyMock.Object;
 
         [Fact]
         public void ConstructorWithNullOperator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncAddOperator<Person, CustomWriteInput> op = null;
+            IAsyncAddOperator<Person, PersonWriteInput> op = null;
 
             // Act
-            Action ctorAction = () => new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(op, Postprocessor);
+            Action ctorAction = () => new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(op, Postprocessor);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -43,10 +43,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullPostprocessor_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAddPostprocessor<Person, CustomWriteInput> postprocessor = null;
+            IAddPostprocessor<Person, PersonWriteInput> postprocessor = null;
 
             // Act
-            Action ctorAction = () => new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, postprocessor);
+            Action ctorAction = () => new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, postprocessor);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -56,10 +56,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullAsyncPostprocessor_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncAddPostprocessor<Person, CustomWriteInput> postprocessor = null;
+            IAsyncAddPostprocessor<Person, PersonWriteInput> postprocessor = null;
 
             // Act
-            Action ctorAction = () => new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, postprocessor);
+            Action ctorAction = () => new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, postprocessor);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -71,7 +71,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, Postprocessor);
+            var decorator = new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, Postprocessor);
 
             // Assert
             Assert.Equal(Operator, decorator.AddOperator);
@@ -84,7 +84,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, AsyncPostprocessor);
+            var decorator = new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, AsyncPostprocessor);
 
             // Assert
             Assert.Equal(Operator, decorator.AddOperator);
@@ -96,7 +96,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -107,7 +107,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.PostprocessForAdd(person, input, ref person))
                 .Callback(() => calls.Add("postprocessor"));
 
-            var decorator = new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, Postprocessor);
+            var decorator = new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, Postprocessor);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -121,7 +121,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -133,7 +133,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(Task.FromResult<object>(null))
                 .Callback(() => calls.Add("postprocessor"));
 
-            var decorator = new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, AsyncPostprocessor);
+            var decorator = new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, AsyncPostprocessor);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -147,7 +147,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -158,7 +158,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.PostprocessForAdd(person, input, ref person))
                 .Callback(() => calls.Add("postprocessor"));
 
-            var decorator = new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, Postprocessor);
+            var decorator = new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, Postprocessor);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -172,7 +172,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -184,7 +184,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(Task.FromResult<object>(null))
                 .Callback(() => calls.Add("postprocessor"));
 
-            var decorator = new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, AsyncPostprocessor);
+            var decorator = new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, AsyncPostprocessor);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -198,7 +198,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
 
             OperatorMock
                 .Setup(x => x.AddAsync(person, input))
@@ -206,7 +206,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             PostprocessorMock
                 .Setup(x => x.PostprocessForAdd(person, input, ref person));
 
-            var decorator = new AsyncAddPostprocessingDecorator<Person, CustomWriteInput>(Operator, Postprocessor);
+            var decorator = new AsyncAddPostprocessingDecorator<Person, PersonWriteInput>(Operator, Postprocessor);
 
             // Act
             var result = await decorator.AddAsync(person, input);

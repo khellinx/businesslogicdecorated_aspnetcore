@@ -14,26 +14,26 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
 {
     public class AsyncDeletePreprocessingDecoratorTests
     {
-        private LazyMock<IAsyncDeleteOperator<Person, int, CustomWriteInput>> _operatorLazyMock = new LazyMock<IAsyncDeleteOperator<Person, int, CustomWriteInput>>();
-        private Mock<IAsyncDeleteOperator<Person, int, CustomWriteInput>> OperatorMock => _operatorLazyMock.Mock;
-        private IAsyncDeleteOperator<Person, int, CustomWriteInput> Operator => _operatorLazyMock.Object;
+        private LazyMock<IAsyncDeleteOperator<Person, int, PersonWriteInput>> _operatorLazyMock = new LazyMock<IAsyncDeleteOperator<Person, int, PersonWriteInput>>();
+        private Mock<IAsyncDeleteOperator<Person, int, PersonWriteInput>> OperatorMock => _operatorLazyMock.Mock;
+        private IAsyncDeleteOperator<Person, int, PersonWriteInput> Operator => _operatorLazyMock.Object;
 
-        private LazyMock<IDeletePreprocessor<Person, int, CustomWriteInput>> _preprocessorLazyMock = new LazyMock<IDeletePreprocessor<Person, int, CustomWriteInput>>();
-        private Mock<IDeletePreprocessor<Person, int, CustomWriteInput>> PreprocessorMock => _preprocessorLazyMock.Mock;
-        private IDeletePreprocessor<Person, int, CustomWriteInput> Preprocessor => _preprocessorLazyMock.Object;
+        private LazyMock<IDeletePreprocessor<Person, int, PersonWriteInput>> _preprocessorLazyMock = new LazyMock<IDeletePreprocessor<Person, int, PersonWriteInput>>();
+        private Mock<IDeletePreprocessor<Person, int, PersonWriteInput>> PreprocessorMock => _preprocessorLazyMock.Mock;
+        private IDeletePreprocessor<Person, int, PersonWriteInput> Preprocessor => _preprocessorLazyMock.Object;
 
-        private LazyMock<IAsyncDeletePreprocessor<Person, int, CustomWriteInput>> _asyncPreprocessorLazyMock = new LazyMock<IAsyncDeletePreprocessor<Person, int, CustomWriteInput>>();
-        private Mock<IAsyncDeletePreprocessor<Person, int, CustomWriteInput>> AsyncPreprocessorMock => _asyncPreprocessorLazyMock.Mock;
-        private IAsyncDeletePreprocessor<Person, int, CustomWriteInput> AsyncPreprocessor => _asyncPreprocessorLazyMock.Object;
+        private LazyMock<IAsyncDeletePreprocessor<Person, int, PersonWriteInput>> _asyncPreprocessorLazyMock = new LazyMock<IAsyncDeletePreprocessor<Person, int, PersonWriteInput>>();
+        private Mock<IAsyncDeletePreprocessor<Person, int, PersonWriteInput>> AsyncPreprocessorMock => _asyncPreprocessorLazyMock.Mock;
+        private IAsyncDeletePreprocessor<Person, int, PersonWriteInput> AsyncPreprocessor => _asyncPreprocessorLazyMock.Object;
 
         [Fact]
         public void ConstructorWithNullOperator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncDeleteOperator<Person, int, CustomWriteInput> op = null;
+            IAsyncDeleteOperator<Person, int, PersonWriteInput> op = null;
 
             // Act
-            Action ctorAction = () => new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(op, Preprocessor);
+            Action ctorAction = () => new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(op, Preprocessor);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -43,10 +43,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullPreprocessor_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IDeletePreprocessor<Person, int, CustomWriteInput> preprocessor = null;
+            IDeletePreprocessor<Person, int, PersonWriteInput> preprocessor = null;
 
             // Act
-            Action ctorAction = () => new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, preprocessor);
+            Action ctorAction = () => new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, preprocessor);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -56,10 +56,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullAsyncPreprocessor_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncDeletePreprocessor<Person, int, CustomWriteInput> preprocessor = null;
+            IAsyncDeletePreprocessor<Person, int, PersonWriteInput> preprocessor = null;
 
             // Act
-            Action ctorAction = () => new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, preprocessor);
+            Action ctorAction = () => new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, preprocessor);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -71,7 +71,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, Preprocessor);
+            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, Preprocessor);
 
             // Assert
             Assert.Equal(Operator, decorator.DeleteOperator);
@@ -84,7 +84,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, AsyncPreprocessor);
+            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, AsyncPreprocessor);
 
             // Assert
             Assert.Equal(Operator, decorator.DeleteOperator);
@@ -96,7 +96,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -107,7 +107,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.PreprocessForDelete(ref id, ref input))
                 .Callback(() => calls.Add("preprocessor"));
 
-            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, Preprocessor);
+            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, Preprocessor);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -121,7 +121,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -133,7 +133,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(Task.FromResult<object>(null))
                 .Callback(() => calls.Add("preprocessor"));
 
-            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, AsyncPreprocessor);
+            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, AsyncPreprocessor);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -147,7 +147,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -158,7 +158,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.PreprocessForDelete(ref id, ref input))
                 .Callback(() => calls.Add("preprocessor"));
 
-            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, Preprocessor);
+            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, Preprocessor);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -172,7 +172,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -184,7 +184,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(Task.FromResult<object>(null))
                 .Callback(() => calls.Add("preprocessor"));
 
-            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, AsyncPreprocessor);
+            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, AsyncPreprocessor);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -198,7 +198,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -209,7 +209,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.PreprocessForDelete(ref id, ref input))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, CustomWriteInput>(Operator, Preprocessor);
+            var decorator = new AsyncDeletePreprocessingDecorator<Person, int, PersonWriteInput>(Operator, Preprocessor);
 
             // Act
             await decorator.DeleteAsync(id, input);

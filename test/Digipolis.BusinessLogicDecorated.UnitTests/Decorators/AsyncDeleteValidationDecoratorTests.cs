@@ -14,26 +14,26 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
 {
     public class AsyncDeleteValidationDecoratorTests
     {
-        private LazyMock<IAsyncDeleteOperator<Person, int, CustomWriteInput>> _operatorLazyMock = new LazyMock<IAsyncDeleteOperator<Person, int, CustomWriteInput>>();
-        private Mock<IAsyncDeleteOperator<Person, int, CustomWriteInput>> OperatorMock => _operatorLazyMock.Mock;
-        private IAsyncDeleteOperator<Person, int, CustomWriteInput> Operator => _operatorLazyMock.Object;
+        private LazyMock<IAsyncDeleteOperator<Person, int, PersonWriteInput>> _operatorLazyMock = new LazyMock<IAsyncDeleteOperator<Person, int, PersonWriteInput>>();
+        private Mock<IAsyncDeleteOperator<Person, int, PersonWriteInput>> OperatorMock => _operatorLazyMock.Mock;
+        private IAsyncDeleteOperator<Person, int, PersonWriteInput> Operator => _operatorLazyMock.Object;
 
-        private LazyMock<IDeleteValidator<Person, int, CustomWriteInput>> _validatorLazyMock = new LazyMock<IDeleteValidator<Person, int, CustomWriteInput>>();
-        private Mock<IDeleteValidator<Person, int, CustomWriteInput>> ValidatorMock => _validatorLazyMock.Mock;
-        private IDeleteValidator<Person, int, CustomWriteInput> Validator => _validatorLazyMock.Object;
+        private LazyMock<IDeleteValidator<Person, int, PersonWriteInput>> _validatorLazyMock = new LazyMock<IDeleteValidator<Person, int, PersonWriteInput>>();
+        private Mock<IDeleteValidator<Person, int, PersonWriteInput>> ValidatorMock => _validatorLazyMock.Mock;
+        private IDeleteValidator<Person, int, PersonWriteInput> Validator => _validatorLazyMock.Object;
 
-        private LazyMock<IAsyncDeleteValidator<Person, int, CustomWriteInput>> _asyncValidatorLazyMock = new LazyMock<IAsyncDeleteValidator<Person, int, CustomWriteInput>>();
-        private Mock<IAsyncDeleteValidator<Person, int, CustomWriteInput>> AsyncValidatorMock => _asyncValidatorLazyMock.Mock;
-        private IAsyncDeleteValidator<Person, int, CustomWriteInput> AsyncValidator => _asyncValidatorLazyMock.Object;
+        private LazyMock<IAsyncDeleteValidator<Person, int, PersonWriteInput>> _asyncValidatorLazyMock = new LazyMock<IAsyncDeleteValidator<Person, int, PersonWriteInput>>();
+        private Mock<IAsyncDeleteValidator<Person, int, PersonWriteInput>> AsyncValidatorMock => _asyncValidatorLazyMock.Mock;
+        private IAsyncDeleteValidator<Person, int, PersonWriteInput> AsyncValidator => _asyncValidatorLazyMock.Object;
 
         [Fact]
         public void ConstructorWithNullOperator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncDeleteOperator<Person, CustomWriteInput> op = null;
+            IAsyncDeleteOperator<Person, PersonWriteInput> op = null;
 
             // Act
-            Action ctorAction = () => new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(op, Validator);
+            Action ctorAction = () => new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(op, Validator);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -43,10 +43,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullValidator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IDeleteValidator<Person, CustomWriteInput> validator = null;
+            IDeleteValidator<Person, PersonWriteInput> validator = null;
 
             // Act
-            Action ctorAction = () => new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, validator);
+            Action ctorAction = () => new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, validator);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -56,10 +56,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullAsyncValidator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncDeleteValidator<Person, CustomWriteInput> validator = null;
+            IAsyncDeleteValidator<Person, PersonWriteInput> validator = null;
 
             // Act
-            Action ctorAction = () => new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, validator);
+            Action ctorAction = () => new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, validator);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -71,7 +71,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, Validator);
 
             // Assert
             Assert.Equal(Operator, decorator.DeleteOperator);
@@ -84,7 +84,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, AsyncValidator);
+            var decorator = new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, AsyncValidator);
 
             // Assert
             Assert.Equal(Operator, decorator.DeleteOperator);
@@ -96,7 +96,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -107,7 +107,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.ValidateForDelete(id, input))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, Validator);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -121,7 +121,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -133,7 +133,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(Task.FromResult<object>(null))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, AsyncValidator);
+            var decorator = new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, AsyncValidator);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -147,7 +147,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -158,7 +158,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.ValidateForDelete(id, input))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, Validator);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -172,7 +172,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -184,7 +184,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(() => Task.FromResult<object>(null))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, AsyncValidator);
+            var decorator = new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, AsyncValidator);
 
             // Act
             await decorator.DeleteAsync(id, input);
@@ -198,7 +198,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var id = 1;
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -209,7 +209,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.ValidateForDelete(id, input))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncDeleteValidationDecorator<Person, int, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncDeleteValidationDecorator<Person, int, PersonWriteInput>(Operator, Validator);
 
             // Act
             await decorator.DeleteAsync(id, input);

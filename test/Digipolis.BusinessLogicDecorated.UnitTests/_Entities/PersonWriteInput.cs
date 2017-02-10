@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Digipolis.BusinessLogicDecorated.UnitTests._Entities
 {
-    public class CustomWriteInput
+    public class PersonWriteInput
     {
     }
 }

@@ -14,26 +14,26 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
 {
     public class AsyncAddValidationDecoratorTests
     {
-        private LazyMock<IAsyncAddOperator<Person, CustomWriteInput>> _operatorLazyMock = new LazyMock<IAsyncAddOperator<Person, CustomWriteInput>>();
-        private Mock<IAsyncAddOperator<Person, CustomWriteInput>> OperatorMock => _operatorLazyMock.Mock;
-        private IAsyncAddOperator<Person, CustomWriteInput> Operator => _operatorLazyMock.Object;
+        private LazyMock<IAsyncAddOperator<Person, PersonWriteInput>> _operatorLazyMock = new LazyMock<IAsyncAddOperator<Person, PersonWriteInput>>();
+        private Mock<IAsyncAddOperator<Person, PersonWriteInput>> OperatorMock => _operatorLazyMock.Mock;
+        private IAsyncAddOperator<Person, PersonWriteInput> Operator => _operatorLazyMock.Object;
 
-        private LazyMock<IAddValidator<Person, CustomWriteInput>> _validatorLazyMock = new LazyMock<IAddValidator<Person, CustomWriteInput>>();
-        private Mock<IAddValidator<Person, CustomWriteInput>> ValidatorMock => _validatorLazyMock.Mock;
-        private IAddValidator<Person, CustomWriteInput> Validator => _validatorLazyMock.Object;
+        private LazyMock<IAddValidator<Person, PersonWriteInput>> _validatorLazyMock = new LazyMock<IAddValidator<Person, PersonWriteInput>>();
+        private Mock<IAddValidator<Person, PersonWriteInput>> ValidatorMock => _validatorLazyMock.Mock;
+        private IAddValidator<Person, PersonWriteInput> Validator => _validatorLazyMock.Object;
 
-        private LazyMock<IAsyncAddValidator<Person, CustomWriteInput>> _asyncValidatorLazyMock = new LazyMock<IAsyncAddValidator<Person, CustomWriteInput>>();
-        private Mock<IAsyncAddValidator<Person, CustomWriteInput>> AsyncValidatorMock => _asyncValidatorLazyMock.Mock;
-        private IAsyncAddValidator<Person, CustomWriteInput> AsyncValidator => _asyncValidatorLazyMock.Object;
+        private LazyMock<IAsyncAddValidator<Person, PersonWriteInput>> _asyncValidatorLazyMock = new LazyMock<IAsyncAddValidator<Person, PersonWriteInput>>();
+        private Mock<IAsyncAddValidator<Person, PersonWriteInput>> AsyncValidatorMock => _asyncValidatorLazyMock.Mock;
+        private IAsyncAddValidator<Person, PersonWriteInput> AsyncValidator => _asyncValidatorLazyMock.Object;
 
         [Fact]
         public void ConstructorWithNullOperator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncAddOperator<Person, CustomWriteInput> op = null;
+            IAsyncAddOperator<Person, PersonWriteInput> op = null;
 
             // Act
-            Action ctorAction = () => new AsyncAddValidationDecorator<Person, CustomWriteInput>(op, Validator);
+            Action ctorAction = () => new AsyncAddValidationDecorator<Person, PersonWriteInput>(op, Validator);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -43,10 +43,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullValidator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAddValidator<Person, CustomWriteInput> validator = null;
+            IAddValidator<Person, PersonWriteInput> validator = null;
 
             // Act
-            Action ctorAction = () => new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, validator);
+            Action ctorAction = () => new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, validator);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -56,10 +56,10 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         public void ConstructorWithNullAsyncValidator_Should_ThrowArgumentNullException()
         {
             // Arrange
-            IAsyncAddValidator<Person, CustomWriteInput> validator = null;
+            IAsyncAddValidator<Person, PersonWriteInput> validator = null;
 
             // Act
-            Action ctorAction = () => new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, validator);
+            Action ctorAction = () => new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, validator);
 
             // Assert
             Assert.Throws<ArgumentNullException>(ctorAction);
@@ -71,7 +71,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, Validator);
 
             // Assert
             Assert.Equal(Operator, decorator.AddOperator);
@@ -84,7 +84,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             // Arrange
 
             // Act
-            var decorator = new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, AsyncValidator);
+            var decorator = new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, AsyncValidator);
 
             // Assert
             Assert.Equal(Operator, decorator.AddOperator);
@@ -96,7 +96,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -107,7 +107,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.ValidateForAdd(person, input))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, Validator);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -121,7 +121,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -133,7 +133,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(Task.FromResult<object>(null))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, AsyncValidator);
+            var decorator = new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, AsyncValidator);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -147,7 +147,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -158,7 +158,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Setup(x => x.ValidateForAdd(person, input))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, Validator);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -172,7 +172,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
             var calls = new List<string>();
 
             OperatorMock
@@ -184,7 +184,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
                 .Returns(() => Task.FromResult<object>(null))
                 .Callback(() => calls.Add("validator"));
 
-            var decorator = new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, AsyncValidator);
+            var decorator = new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, AsyncValidator);
 
             // Act
             await decorator.AddAsync(person, input);
@@ -198,7 +198,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
         {
             // Arrange
             var person = new Person();
-            CustomWriteInput input = null;
+            PersonWriteInput input = null;
 
             OperatorMock
                 .Setup(x => x.AddAsync(person, input))
@@ -206,7 +206,7 @@ namespace Digipolis.BusinessLogicDecorated.UnitTests.Decorators
             ValidatorMock
                 .Setup(x => x.ValidateForAdd(person, input));
 
-            var decorator = new AsyncAddValidationDecorator<Person, CustomWriteInput>(Operator, Validator);
+            var decorator = new AsyncAddValidationDecorator<Person, PersonWriteInput>(Operator, Validator);
 
             // Act
             var result = await decorator.AddAsync(person, input);
