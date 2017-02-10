@@ -22,11 +22,21 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     {
         public AsyncUpdatePreprocessingDecorator(IAsyncUpdateOperator<TEntity, TInput> updateOperator, IUpdatePreprocessor<TEntity, TInput> preprocessor) : base(updateOperator)
         {
+            if (preprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(preprocessor));
+            }
+
             Preprocessor = preprocessor;
         }
 
         public AsyncUpdatePreprocessingDecorator(IAsyncUpdateOperator<TEntity, TInput> updateOperator, IAsyncUpdatePreprocessor<TEntity, TInput> preprocessor) : base(updateOperator)
         {
+            if (preprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(preprocessor));
+            }
+
             AsyncPreprocessor = preprocessor;
         }
 
