@@ -22,11 +22,21 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     {
         public AsyncAddPostprocessingDecorator(IAsyncAddOperator<TEntity, TInput> addOperator, IAddPostprocessor<TEntity, TInput> postprocessor) : base(addOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             Postprocessor = postprocessor;
         }
 
         public AsyncAddPostprocessingDecorator(IAsyncAddOperator<TEntity, TInput> addOperator, IAsyncAddPostprocessor<TEntity, TInput> postprocessor) : base(addOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             AsyncPostprocessor = postprocessor;
         }
 
