@@ -17,7 +17,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncDeleteOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity>> operatorFactory = null)
+        public IAsyncDeleteOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity>> operatorFactory)
         {
             if (operatorFactory == null)
             {
@@ -137,7 +137,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> operatorFactory = null)
+        public IAsyncDeleteOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TInput>> operatorFactory)
         {
             if (operatorFactory == null)
             {
@@ -257,7 +257,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TId, TInput>> operatorFactory = null)
+        public IAsyncDeleteOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncDeleteOperator<TEntity, TId, TInput>> operatorFactory)
         {
             if (operatorFactory == null)
             {

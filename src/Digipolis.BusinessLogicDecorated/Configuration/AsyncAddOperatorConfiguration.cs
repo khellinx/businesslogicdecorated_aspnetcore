@@ -17,7 +17,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncAddOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity>> operatorFactory = null)
+        public IAsyncAddOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity>> operatorFactory)
         {
             if (operatorFactory == null)
             {
@@ -137,7 +137,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory = null)
+        public IAsyncAddOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncAddOperator<TEntity, TInput>> operatorFactory)
         {
             if (operatorFactory == null)
             {

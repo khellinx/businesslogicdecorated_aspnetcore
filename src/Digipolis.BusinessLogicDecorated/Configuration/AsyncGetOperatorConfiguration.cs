@@ -17,7 +17,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncGetOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity>> operatorFactory = null)
+        public IAsyncGetOperatorConfiguration<TEntity> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity>> operatorFactory)
         {
             if (operatorFactory == null)
             {
@@ -108,7 +108,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity, TInput>> operatorFactory = null)
+        public IAsyncGetOperatorConfiguration<TEntity, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity, TInput>> operatorFactory)
         {
             if (operatorFactory == null)
             {
@@ -199,7 +199,7 @@ namespace Digipolis.BusinessLogicDecorated.Configuration
         {
         }
 
-        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity, TId, TInput>> operatorFactory = null)
+        public IAsyncGetOperatorConfiguration<TEntity, TId, TInput> WithCustomOperator(Func<IServiceProvider, IAsyncGetOperator<TEntity, TId, TInput>> operatorFactory)
         {
             if (operatorFactory == null)
             {
