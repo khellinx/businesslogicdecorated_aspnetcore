@@ -13,6 +13,11 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     {
         public AsyncQueryDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator)
         {
+            if (queryOperator == null)
+            {
+                throw new ArgumentNullException(nameof(queryOperator));
+            }
+
             QueryOperator = queryOperator;
         }
 

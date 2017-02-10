@@ -25,11 +25,21 @@ namespace Digipolis.BusinessLogicDecorated.Decorators
     {
         public AsyncQueryPostprocessingDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator, IQueryPostprocessor<TEntity, TInput> postprocessor) : base(queryOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             Postprocessor = postprocessor;
         }
 
         public AsyncQueryPostprocessingDecorator(IAsyncQueryOperator<TEntity, TInput> queryOperator, IAsyncQueryPostprocessor<TEntity, TInput> postprocessor) : base(queryOperator)
         {
+            if (postprocessor == null)
+            {
+                throw new ArgumentNullException(nameof(postprocessor));
+            }
+
             AsyncPostprocessor = postprocessor;
         }
 
